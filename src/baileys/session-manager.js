@@ -97,9 +97,14 @@ class SessionManager {
         code: null,
         createdAt: Date.now(),
         reconnectAttempts: 0,
+        reconnectTimer: null,
       };
       this.sessions.set(cleanPhone, sessionData);
     } else {
+      if (sessionData.reconnectTimer) {
+        clearTimeout(sessionData.reconnectTimer);
+        sessionData.reconnectTimer = null;
+      }
       sessionData.sock = sock;
       if (isInitialPairing) {
         sessionData.status = "pairing";
@@ -115,6 +120,10 @@ class SessionManager {
         logger.info(`[Session] WhatsApp companion connected successfully for: ${cleanPhone}`);
         sessionData.status = "connected";
         sessionData.reconnectAttempts = 0;
+        if (sessionData.reconnectTimer) {
+          clearTimeout(sessionData.reconnectTimer);
+          sessionData.reconnectTimer = null;
+        }
         attachZeroSightHandler(sock, cleanPhone, logger);
       }
 
@@ -128,6 +137,11 @@ class SessionManager {
           sock.ev.removeAllListeners();
           sock.ws?.close?.();
         } catch (_) {}
+
+        if (sessionData.reconnectTimer) {
+          clearTimeout(sessionData.reconnectTimer);
+          sessionData.reconnectTimer = null;
+        }
 
         if (!shouldReconnect) {
           await this.disconnect(cleanPhone);
@@ -148,7 +162,8 @@ class SessionManager {
           }
 
           logger.info(`[Session] Scheduling auto-reconnect for ${cleanPhone} in ${delayMs}ms (attempt ${sessionData.reconnectAttempts}, status: ${statusCode})...`);
-          setTimeout(() => {
+          sessionData.reconnectTimer = setTimeout(() => {
+            sessionData.reconnectTimer = null;
             this.connectSocket(cleanPhone, false).catch((err) => {
               logger.error({ err }, `[Session] Failed to auto-reconnect ${cleanPhone}`);
             });
@@ -229,6 +244,10 @@ class SessionManager {
    */
   async disconnect(cleanPhone) {
     const session = this.sessions.get(cleanPhone);
+    if (session?.reconnectTimer) {
+      clearTimeout(session.reconnectTimer);
+      session.reconnectTimer = null;
+    }
     if (session?.sock) {
       try {
         await session.sock.logout();
@@ -247,6 +266,39 @@ class SessionManager {
     } catch (err) {
       logger.error({ err }, `[Session] Failed removing session directory for: ${cleanPhone}`);
     }
+  }
+
+  /**
+   * Closes all active sessions, cancels all reconnection timers, and wipes storage directory.
+   */
+  async disconnectAll() {
+    const disconnected = [];
+    for (const [phone, session] of this.sessions.entries()) {
+      try {
+        if (session.reconnectTimer) {
+          clearTimeout(session.reconnectTimer);
+          session.reconnectTimer = null;
+        }
+        if (session.sock) {
+          try { session.sock.ev?.removeAllListeners(); } catch (_) {}
+          try { await session.sock.logout?.(); } catch (_) {}
+          try { session.sock.end?.(); } catch (_) {}
+          try { session.sock.ws?.close?.(); } catch (_) {}
+        }
+        disconnected.push(phone);
+      } catch (_) {}
+    }
+    this.sessions.clear();
+
+    try {
+      await fs.rm(config.sessionsDir, { recursive: true, force: true }).catch(() => {});
+      await fs.mkdir(config.sessionsDir, { recursive: true, mode: 0o700 });
+      logger.info(`[Session] Disconnected all sessions (${disconnected.length}) and wiped storage.`);
+    } catch (err) {
+      logger.error({ err }, "[Session] Failed to wipe sessions directory");
+    }
+
+    return { count: disconnected.length, phones: disconnected };
   }
 }
 
