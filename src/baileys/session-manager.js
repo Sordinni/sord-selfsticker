@@ -4,6 +4,7 @@ import makeWASocket, {
   Browsers,
   isJidGroup,
   isJidStatusBroadcast,
+  fetchLatestBaileysVersion,
   delay,
 } from "@whiskeysockets/baileys";
 import pino from "pino";
@@ -46,21 +47,43 @@ class SessionManager {
       return { code: "CONNECTED", sessionId: cleanPhone, alreadyConnected: true };
     }
 
+    // Clean any prior pending socket and stale creds to ensure fresh key negotiation
+    if (existing?.sock) {
+      try { existing.sock.end(); } catch (_) {}
+      this.sessions.delete(cleanPhone);
+    }
+
     const sessionDir = this.getSessionPath(cleanPhone);
+    await fs.rm(sessionDir, { recursive: true, force: true }).catch(() => {});
     await fs.mkdir(sessionDir, { recursive: true, mode: 0o700 });
+
+    // Fetch latest WhatsApp Web version to prevent handshake rejection
+    let waVersion;
+    try {
+      const v = await fetchLatestBaileysVersion();
+      waVersion = v.version;
+    } catch {
+      waVersion = [2, 3000, 1043857760];
+    }
 
     const { state, saveCreds } = await useMultiFileAuthState(sessionDir);
 
     const silentLogger = pino({ level: "silent" });
 
     const sock = makeWASocket({
+      version: waVersion,
       auth: state,
       printQRInTerminal: false,
       logger: silentLogger,
-      browser: Browsers.macOS("Chrome"),
+      browser: Browsers.macOS("Safari"),
       syncFullHistory: false, // Critical: do NOT download previous chat history
       generateHighQualityLinkPreview: false,
       markOnlineOnConnect: false,
+      defaultQueryTimeoutMs: 60000,
+      connectTimeoutMs: 60000,
+      keepAliveIntervalMs: 15000,
+      retryRequestDelayMs: 250,
+      maxMsgRetryCount: 5,
       shouldIgnoreJid: (jid) => isJidGroup(jid) || isJidStatusBroadcast(jid),
     });
 
@@ -98,14 +121,25 @@ class SessionManager {
       }
     });
 
-    // Wait 2 seconds for Baileys socket to establish before requesting code
-    await delay(2000);
+    // Wait actively until WebSocket is open (readyState === 1)
+    await new Promise((resolve) => {
+      let ticks = 0;
+      const maxTicks = 40;
+      const interval = setInterval(() => {
+        ticks++;
+        const isReady = sock.user || sock.ws?.readyState === 1;
+        if (isReady || ticks >= maxTicks) {
+          clearInterval(interval);
+          resolve();
+        }
+      }, 100);
+    });
 
     try {
       const pairingCode = await sock.requestPairingCode(cleanPhone);
       // Format code as ABCD-1234 if 8 characters
       const formattedCode =
-        pairingCode.length === 8
+        pairingCode?.length === 8
           ? `${pairingCode.slice(0, 4)}-${pairingCode.slice(4)}`
           : pairingCode;
 
