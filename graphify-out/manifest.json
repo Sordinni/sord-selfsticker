@@ -1,0 +1,57 @@
+{
+  "C:\\Users\\sordinni\\sord-selfsticker\\package.json": {
+    "mtime": 1792573576.5934925,
+    "ast_hash": "743b0c01ff25101458bccf09f9a67b2b",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\sordinni\\sord-selfsticker\\src\\config.js": {
+    "mtime": 1792573656.7429273,
+    "ast_hash": "1c2e80d2a0d84501220ea1b3422f8ac7",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\sordinni\\sord-selfsticker\\src\\index.js": {
+    "mtime": 1792573715.551354,
+    "ast_hash": "23cf599bb9d99e951dc26e79975197e5",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\sordinni\\sord-selfsticker\\src\\baileys\\session-manager.js": {
+    "mtime": 1792573704.4161687,
+    "ast_hash": "dd7c6ea1932cc4808cbccc1d2ffa4226",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\sordinni\\sord-selfsticker\\src\\baileys\\zero-sight.js": {
+    "mtime": 1792573689.4452283,
+    "ast_hash": "0df74e59d32946c7cbf54c4b67f8d5f5",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\sordinni\\sord-selfsticker\\src\\security\\sanitizer.js": {
+    "mtime": 1792573665.188177,
+    "ast_hash": "797e74931fb2902dbd953516ced34d3d",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\sordinni\\sord-selfsticker\\src\\sticker\\converter.js": {
+    "mtime": 1792573678.6370633,
+    "ast_hash": "7e47ff355b52c4dc17bccc2b871590f0",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\sordinni\\sord-selfsticker\\DISCLAIMER.md": {
+    "mtime": 1792573599.8347938,
+    "ast_hash": "90e5104f6dec92f40d839a3380cf8fcd",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\sordinni\\sord-selfsticker\\docker-compose.yml": {
+    "mtime": 1792573648.69879,
+    "ast_hash": "2d0ac30bd564c3042b4a9eda14100ab1",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\sordinni\\sord-selfsticker\\README.md": {
+    "mtime": 1792573621.8256543,
+    "ast_hash": "80216d78816ff5d8aaf34b412a3db036",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\sordinni\\sord-selfsticker\\SECURITY.md": {
+    "mtime": 1792573610.2025492,
+    "ast_hash": "d29df57a996566e080c2ad436315c0a1",
+    "semantic_hash": ""
+  }
+}
