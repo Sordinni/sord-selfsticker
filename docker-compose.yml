@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  sord-selfsticker:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "3002:3002"
+    environment:
+      - PORT=3002
+      - CORS_ORIGIN=http://localhost:5173,https://sordbot.site
+      - SESSIONS_DIR=/app/sessions
+    volumes:
+      - sessions_data:/app/sessions
+    deploy:
+      resources:
+        limits:
+          cpus: '1.5'
+          memory: 1G
+
+volumes:
+  sessions_data:

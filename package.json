@@ -1,0 +1,33 @@
+{
+  "name": "sord-selfsticker",
+  "version": "1.0.0",
+  "description": "WhatsApp companion bot strictly dedicated to self-chat sticker creation with Zero-Sight privacy architecture.",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "keywords": [
+    "whatsapp",
+    "baileys",
+    "sticker-bot",
+    "zero-sight",
+    "privacy",
+    "sharp",
+    "ffmpeg",
+    "agplv3"
+  ],
+  "author": "Sordinni",
+  "license": "AGPL-3.0-or-later",
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.12",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "libphonenumber-js": "^1.12.37",
+    "node-webpmux": "^3.2.1",
+    "pino": "^9.6.0",
+    "pino-pretty": "^13.0.0",
+    "sharp": "^0.33.5"
+  }
+}
