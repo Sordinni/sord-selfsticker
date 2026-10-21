@@ -195,22 +195,50 @@ class SessionManager {
 
     const { sock, sessionData } = await this.connectSocket(cleanPhone, true);
 
-    // Wait actively until WebSocket is open (readyState === 1) exactly as in Sordinho
-    await new Promise((resolve) => {
-      let ticks = 0;
-      const maxTicks = 40;
-      const interval = setInterval(() => {
-        ticks++;
-        const isReady = sock.user || sock.ws?.readyState === 1;
-        if (isReady || ticks >= maxTicks) {
-          clearInterval(interval);
-          resolve();
+    // Wait until WebSocket is actually open (ws.isOpen or waitForSocketOpen)
+    let isOpened = Boolean(sock.ws?.isOpen || sock.user);
+    if (!isOpened) {
+      for (let i = 0; i < 50; i++) {
+        if (sock.ws?.isOpen || sock.user) {
+          isOpened = true;
+          break;
         }
-      }, 100);
-    });
+        await new Promise((r) => setTimeout(r, 200));
+      }
+    }
+
+    if (!isOpened && typeof sock.waitForSocketOpen === "function") {
+      try {
+        await Promise.race([
+          sock.waitForSocketOpen(),
+          new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout conectando ao WhatsApp")), 10000)),
+        ]);
+      } catch (_) {}
+    }
 
     try {
-      let rawCode = await sock.requestPairingCode(cleanPhone);
+      let rawCode;
+      let lastErr = null;
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        try {
+          rawCode = await sock.requestPairingCode(cleanPhone);
+          if (rawCode) break;
+        } catch (err) {
+          lastErr = err;
+          const isConnClosed = err?.output?.statusCode === 428 || err?.message?.includes("Connection Closed");
+          if (isConnClosed && attempt < 3) {
+            logger.warn(`[Session] Socket closed during pairing code request (attempt ${attempt}/3). Retrying...`);
+            await new Promise((r) => setTimeout(r, 1500));
+          } else {
+            throw err;
+          }
+        }
+      }
+
+      if (!rawCode && lastErr) {
+        throw lastErr;
+      }
+
       const formattedCode = rawCode?.match(/.{1,4}/g)?.join("-") || rawCode;
 
       sessionData.code = formattedCode;
