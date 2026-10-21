@@ -1,16 +1,13 @@
-import makeWASocket, {
+import {
   useMultiFileAuthState,
   DisconnectReason,
-  Browsers,
-  isJidGroup,
-  isJidStatusBroadcast,
-  fetchLatestBaileysVersion,
-  delay,
 } from "@whiskeysockets/baileys";
 import pino from "pino";
 import fs from "fs/promises";
 import path from "path";
 import { config } from "../config.js";
+import { createConnection, BaileysVersion } from "./connection.js";
+import { naruyaizumi } from "./socket.js";
 import { attachZeroSightHandler } from "./zero-sight.js";
 
 const logger = pino({
@@ -20,6 +17,8 @@ const logger = pino({
     options: { colorize: true },
   },
 });
+
+const versionFetcher = new BaileysVersion();
 
 class SessionManager {
   constructor() {
@@ -36,9 +35,9 @@ class SessionManager {
   }
 
   /**
-   * Starts a pairing session for the given phone number.
+   * Starts a pairing session for the given phone number using Sordinho's exact initialization instance.
    * @param {string} cleanPhone
-   * @returns {Promise<{ code: string, sessionId: string }>}
+   * @returns {Promise<{ code: string, sessionId: string, alreadyConnected?: boolean }>}
    */
   async startPairing(cleanPhone) {
     // If there is already an active connected session, return status
@@ -58,34 +57,26 @@ class SessionManager {
     await fs.mkdir(sessionDir, { recursive: true, mode: 0o700 });
 
     // Fetch latest WhatsApp Web version to prevent handshake rejection
-    let waVersion;
-    try {
-      const v = await fetchLatestBaileysVersion();
-      waVersion = v.version;
-    } catch {
-      waVersion = [2, 3000, 1043857760];
-    }
+    const waVersion = await versionFetcher.fetchVersion();
 
     const { state, saveCreds } = await useMultiFileAuthState(sessionDir);
+    const auth = { state, saveCreds };
 
-    const silentLogger = pino({ level: "silent" });
-
-    const sock = makeWASocket({
-      version: waVersion,
-      auth: state,
-      printQRInTerminal: false,
-      logger: silentLogger,
-      browser: Browsers.macOS("Safari"),
-      syncFullHistory: false, // Critical: do NOT download previous chat history
-      generateHighQualityLinkPreview: false,
-      markOnlineOnConnect: false,
-      defaultQueryTimeoutMs: 60000,
-      connectTimeoutMs: 60000,
-      keepAliveIntervalMs: 15000,
-      retryRequestDelayMs: 250,
-      maxMsgRetryCount: 5,
-      shouldIgnoreJid: (jid) => isJidGroup(jid) || isJidStatusBroadcast(jid),
+    const silentLogger = pino({
+      level: "silent",
+      base: { module: "SORD-SELFSTICKER" },
     });
+
+    // Usa createConnection idêntico ao Sordinho
+    const connectionConfig = createConnection(
+      waVersion,
+      auth,
+      silentLogger,
+      cleanPhone
+    );
+
+    // Usa naruyaizumi idêntico ao Sordinho
+    const sock = naruyaizumi(connectionConfig);
 
     sock.ev.on("creds.update", saveCreds);
 
@@ -121,7 +112,7 @@ class SessionManager {
       }
     });
 
-    // Wait actively until WebSocket is open (readyState === 1)
+    // Wait actively until WebSocket is open (readyState === 1) exactly as in Sordinho
     await new Promise((resolve) => {
       let ticks = 0;
       const maxTicks = 40;
@@ -136,12 +127,8 @@ class SessionManager {
     });
 
     try {
-      const pairingCode = await sock.requestPairingCode(cleanPhone);
-      // Format code as ABCD-1234 if 8 characters
-      const formattedCode =
-        pairingCode?.length === 8
-          ? `${pairingCode.slice(0, 4)}-${pairingCode.slice(4)}`
-          : pairingCode;
+      let rawCode = await sock.requestPairingCode(cleanPhone);
+      const formattedCode = rawCode?.match(/.{1,4}/g)?.join("-") || rawCode;
 
       sessionData.code = formattedCode;
       return { code: formattedCode, sessionId: cleanPhone };

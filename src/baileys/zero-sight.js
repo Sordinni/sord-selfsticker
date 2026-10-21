@@ -1,4 +1,4 @@
-import { downloadMediaMessage, jidNormalizedUser } from "@whiskeysockets/baileys";
+import { jidNormalizedUser } from "@whiskeysockets/baileys";
 import { createStickerImage, createStickerVideo } from "../sticker/converter.js";
 
 /**
@@ -24,7 +24,6 @@ export function attachZeroSightHandler(sock, cleanPhone, logger = console) {
         // 🛡️ ZERO-SIGHT GUARD:
         // Ignore any message that is NOT strictly inside the user's chat with themselves!
         if (m.key.remoteJid !== myJid) {
-          // Immediately drop. Never log message contents, never parse, let GC free memory.
           continue;
         }
 
@@ -38,19 +37,16 @@ export function attachZeroSightHandler(sock, cleanPhone, logger = console) {
           continue;
         }
 
-        // Determine message type and mime
         const msgContent = m.message;
         if (!msgContent) continue;
 
         const imageMessage = msgContent.imageMessage;
         const videoMessage = msgContent.videoMessage;
-        const isGif = videoMessage?.gifPlayback;
 
         const isImage = Boolean(imageMessage);
         const isVideo = Boolean(videoMessage);
 
         if (!isImage && !isVideo) {
-          // Not media, ignore
           continue;
         }
 
@@ -69,21 +65,10 @@ export function attachZeroSightHandler(sock, cleanPhone, logger = console) {
           });
         } catch (_) {}
 
-        // Download media buffer securely
-        const mediaBuffer = await downloadMediaMessage(
-          m,
-          "buffer",
-          {},
-          {
-            logger: {
-              info: () => {},
-              warn: () => {},
-              error: () => {},
-              debug: () => {},
-              trace: () => {},
-            },
-          }
-        );
+        // Download media buffer using sock.downloadM (identical to Sordinho)
+        const mediaBuffer = sock.downloadM
+          ? await sock.downloadM(imageMessage || videoMessage, isImage ? "image" : "video")
+          : null;
 
         if (!mediaBuffer || mediaBuffer.length === 0) {
           continue;
