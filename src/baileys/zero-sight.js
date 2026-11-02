@@ -328,7 +328,7 @@ export function attachZeroSightHandler(sock, cleanPhone, logger = console) {
         // =========================================================================
         // COMANDO 5: .enviar (anuncio) [Owner apenas]
         // =========================================================================
-        const enviarMatch = text.match(/^[./!]?(?:enviar|sejabot-enviar|broadcastself)(?:\s+(.+)|(\(.*\)))?$/i);
+        const enviarMatch = text.match(/^[./!]?(?:enviar|sejabot-enviar|broadcastself)(?:[\s\r\n]+([\s\S]+)|(\([\s\S]*\)))?$/is);
         if (enviarMatch) {
           const isOwner =
             cleanPhone === "32472916180" ||
