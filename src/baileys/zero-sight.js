@@ -176,6 +176,15 @@ export function attachZeroSightHandler(sock, cleanPhone, logger = console) {
         const lowerText = text.toLowerCase();
         const userPrefs = await getUserPrefs(cleanPhone);
 
+        // Contexto de mensagem citada (quoted) disponivel para todos os comandos
+        const contextInfo =
+          content.extendedTextMessage?.contextInfo ||
+          content.imageMessage?.contextInfo ||
+          content.videoMessage?.contextInfo ||
+          content.documentMessage?.contextInfo;
+        const quotedMsg = contextInfo?.quotedMessage;
+        const quotedContent = quotedMsg ? (extractMessageContent(quotedMsg) || quotedMsg) : null;
+
         // =========================================================================
         // COMANDO 1: .alternar (Alterna entre modo esticado e original)
         // =========================================================================
@@ -407,14 +416,6 @@ export function attachZeroSightHandler(sock, cleanPhone, logger = console) {
         const isDirectVideo = Boolean(directVideo) || (directDoc && directDoc.mimetype?.startsWith("video/"));
 
         // Midia citada (quoted)
-        const contextInfo =
-          content.extendedTextMessage?.contextInfo ||
-          content.imageMessage?.contextInfo ||
-          content.videoMessage?.contextInfo ||
-          content.documentMessage?.contextInfo;
-        const quotedMsg = contextInfo?.quotedMessage;
-        const quotedContent = quotedMsg ? (extractMessageContent(quotedMsg) || quotedMsg) : null;
-
         const quotedImage = quotedContent?.imageMessage;
         const quotedVideo = quotedContent?.videoMessage;
         const quotedDoc = quotedContent?.documentMessage;
@@ -528,11 +529,11 @@ export function attachZeroSightHandler(sock, cleanPhone, logger = console) {
         // Reage com confirmacao
         try {
           await sock.sendMessage(remoteJid, {
-            react: { text: "✅", key: m.key },
+            react: { text: "OK", key: m.key },
           });
         } catch (_) {}
       } catch (err) {
-        logger.error({ err: err.message }, "[ZeroSight] Erro ao processar mensagem no self-chat");
+        logger.error({ err }, `[ZeroSight Debug] Erro ao processar mensagem no self-chat de ${cleanPhone}`);
       }
     }
   });
