@@ -274,13 +274,67 @@
       "norm_label": "status"
     },
     {
+      "label": "text",
+      "file_type": "code",
+      "source_file": "src/index.js",
+      "source_location": "L133",
+      "id": "src_index_text",
+      "community": 0,
+      "norm_label": "text"
+    },
+    {
       "label": "main()",
       "file_type": "code",
       "source_file": "src/index.js",
-      "source_location": "L126",
+      "source_location": "L146",
       "id": "src_index_main",
       "community": 0,
       "norm_label": "main()"
+    },
+    {
+      "label": "connection.js",
+      "file_type": "code",
+      "source_file": "src/baileys/connection.js",
+      "source_location": "L1",
+      "id": "src_baileys_connection_js",
+      "community": 10,
+      "norm_label": "connection.js"
+    },
+    {
+      "label": "BaileysVersion",
+      "file_type": "code",
+      "source_file": "src/baileys/connection.js",
+      "source_location": "L3",
+      "id": "baileys_connection_baileysversion",
+      "community": 10,
+      "norm_label": "baileysversion"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/baileys/connection.js",
+      "source_location": "L4",
+      "id": "baileys_connection_baileysversion_constructor",
+      "community": 10,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": ".fetchVersion()",
+      "file_type": "code",
+      "source_file": "src/baileys/connection.js",
+      "source_location": "L12",
+      "id": "baileys_connection_baileysversion_fetchversion",
+      "community": 10,
+      "norm_label": ".fetchversion()"
+    },
+    {
+      "label": "createConnection()",
+      "file_type": "code",
+      "source_file": "src/baileys/connection.js",
+      "source_location": "L52",
+      "id": "baileys_connection_createconnection",
+      "community": 10,
+      "norm_label": "createconnection()"
     },
     {
       "label": "session-manager.js",
@@ -288,17 +342,26 @@
       "source_file": "src/baileys/session-manager.js",
       "source_location": "L1",
       "id": "src_baileys_session_manager_js",
-      "community": 0,
+      "community": 10,
       "norm_label": "session-manager.js"
     },
     {
       "label": "logger",
       "file_type": "code",
       "source_file": "src/baileys/session-manager.js",
-      "source_location": "L15",
+      "source_location": "L13",
       "id": "baileys_session_manager_logger",
-      "community": 0,
+      "community": 10,
       "norm_label": "logger"
+    },
+    {
+      "label": "versionFetcher",
+      "file_type": "code",
+      "source_file": "src/baileys/session-manager.js",
+      "source_location": "L21",
+      "id": "baileys_session_manager_versionfetcher",
+      "community": 10,
+      "norm_label": "versionfetcher"
     },
     {
       "label": "SessionManager",
@@ -331,16 +394,25 @@
       "label": ".getSessionPath()",
       "file_type": "code",
       "source_file": "src/baileys/session-manager.js",
-      "source_location": "L33",
+      "source_location": "L53",
       "id": "baileys_session_manager_sessionmanager_getsessionpath",
       "community": 7,
       "norm_label": ".getsessionpath()"
     },
     {
+      "label": ".connectSocket()",
+      "file_type": "code",
+      "source_file": "src/baileys/session-manager.js",
+      "source_location": "L62",
+      "id": "baileys_session_manager_sessionmanager_connectsocket",
+      "community": 7,
+      "norm_label": ".connectsocket()"
+    },
+    {
       "label": ".startPairing()",
       "file_type": "code",
       "source_file": "src/baileys/session-manager.js",
-      "source_location": "L42",
+      "source_location": "L183",
       "id": "baileys_session_manager_sessionmanager_startpairing",
       "community": 7,
       "norm_label": ".startpairing()"
@@ -349,7 +421,7 @@
       "label": ".getStatus()",
       "file_type": "code",
       "source_file": "src/baileys/session-manager.js",
-      "source_location": "L124",
+      "source_location": "L257",
       "id": "baileys_session_manager_sessionmanager_getstatus",
       "community": 7,
       "norm_label": ".getstatus()"
@@ -358,10 +430,55 @@
       "label": ".disconnect()",
       "file_type": "code",
       "source_file": "src/baileys/session-manager.js",
-      "source_location": "L140",
+      "source_location": "L273",
       "id": "baileys_session_manager_sessionmanager_disconnect",
       "community": 7,
       "norm_label": ".disconnect()"
+    },
+    {
+      "label": ".disconnectAll()",
+      "file_type": "code",
+      "source_file": "src/baileys/session-manager.js",
+      "source_location": "L302",
+      "id": "baileys_session_manager_sessionmanager_disconnectall",
+      "community": 7,
+      "norm_label": ".disconnectall()"
+    },
+    {
+      "label": ".getRegisteredUsers()",
+      "file_type": "code",
+      "source_file": "src/baileys/session-manager.js",
+      "source_location": "L336",
+      "id": "baileys_session_manager_sessionmanager_getregisteredusers",
+      "community": 7,
+      "norm_label": ".getregisteredusers()"
+    },
+    {
+      "label": ".broadcast()",
+      "file_type": "code",
+      "source_file": "src/baileys/session-manager.js",
+      "source_location": "L384",
+      "id": "baileys_session_manager_sessionmanager_broadcast",
+      "community": 7,
+      "norm_label": ".broadcast()"
+    },
+    {
+      "label": "socket.js",
+      "file_type": "code",
+      "source_file": "src/baileys/socket.js",
+      "source_location": "L1",
+      "id": "src_baileys_socket_js",
+      "community": 10,
+      "norm_label": "socket.js"
+    },
+    {
+      "label": "naruyaizumi()",
+      "file_type": "code",
+      "source_file": "src/baileys/socket.js",
+      "source_location": "L7",
+      "id": "baileys_socket_naruyaizumi",
+      "community": 10,
+      "norm_label": "naruyaizumi()"
     },
     {
       "label": "zero-sight.js",
@@ -369,16 +486,79 @@
       "source_file": "src/baileys/zero-sight.js",
       "source_location": "L1",
       "id": "src_baileys_zero_sight_js",
-      "community": 8,
+      "community": 11,
       "norm_label": "zero-sight.js"
+    },
+    {
+      "label": "silentLogger",
+      "file_type": "code",
+      "source_file": "src/baileys/zero-sight.js",
+      "source_location": "L22",
+      "id": "baileys_zero_sight_silentlogger",
+      "community": 11,
+      "norm_label": "silentlogger"
+    },
+    {
+      "label": "botSentMsgIds",
+      "file_type": "code",
+      "source_file": "src/baileys/zero-sight.js",
+      "source_location": "L23",
+      "id": "baileys_zero_sight_botsentmsgids",
+      "community": 11,
+      "norm_label": "botsentmsgids"
+    },
+    {
+      "label": "trackBotMessage()",
+      "file_type": "code",
+      "source_file": "src/baileys/zero-sight.js",
+      "source_location": "L29",
+      "id": "baileys_zero_sight_trackbotmessage",
+      "community": 11,
+      "norm_label": "trackbotmessage()"
+    },
+    {
+      "label": "sendReply()",
+      "file_type": "code",
+      "source_file": "src/baileys/zero-sight.js",
+      "source_location": "L43",
+      "id": "baileys_zero_sight_sendreply",
+      "community": 11,
+      "norm_label": "sendreply()"
+    },
+    {
+      "label": "sendSticker()",
+      "file_type": "code",
+      "source_file": "src/baileys/zero-sight.js",
+      "source_location": "L60",
+      "id": "baileys_zero_sight_sendsticker",
+      "community": 11,
+      "norm_label": "sendsticker()"
+    },
+    {
+      "label": "extractText()",
+      "file_type": "code",
+      "source_file": "src/baileys/zero-sight.js",
+      "source_location": "L75",
+      "id": "baileys_zero_sight_extracttext",
+      "community": 11,
+      "norm_label": "extracttext()"
+    },
+    {
+      "label": "downloadMedia()",
+      "file_type": "code",
+      "source_file": "src/baileys/zero-sight.js",
+      "source_location": "L95",
+      "id": "baileys_zero_sight_downloadmedia",
+      "community": 11,
+      "norm_label": "downloadmedia()"
     },
     {
       "label": "attachZeroSightHandler()",
       "file_type": "code",
       "source_file": "src/baileys/zero-sight.js",
-      "source_location": "L15",
+      "source_location": "L130",
       "id": "baileys_zero_sight_attachzerosighthandler",
-      "community": 0,
+      "community": 10,
       "norm_label": "attachzerosighthandler()"
     },
     {
@@ -463,10 +643,19 @@
       "norm_label": "addexiftowebp()"
     },
     {
+      "label": "setStickerMetadata()",
+      "file_type": "code",
+      "source_file": "src/sticker/converter.js",
+      "source_location": "L56",
+      "id": "sticker_converter_setstickermetadata",
+      "community": 8,
+      "norm_label": "setstickermetadata()"
+    },
+    {
       "label": "createStickerImage()",
       "file_type": "code",
       "source_file": "src/sticker/converter.js",
-      "source_location": "L57",
+      "source_location": "L71",
       "id": "sticker_converter_createstickerimage",
       "community": 8,
       "norm_label": "createstickerimage()"
@@ -475,10 +664,91 @@
       "label": "createStickerVideo()",
       "file_type": "code",
       "source_file": "src/sticker/converter.js",
-      "source_location": "L86",
+      "source_location": "L111",
       "id": "sticker_converter_createstickervideo",
       "community": 8,
       "norm_label": "createstickervideo()"
+    },
+    {
+      "label": "user-prefs.js",
+      "file_type": "code",
+      "source_file": "src/sticker/user-prefs.js",
+      "source_location": "L1",
+      "id": "src_sticker_user_prefs_js",
+      "community": 11,
+      "norm_label": "user-prefs.js"
+    },
+    {
+      "label": "prefsCache",
+      "file_type": "code",
+      "source_file": "src/sticker/user-prefs.js",
+      "source_location": "L5",
+      "id": "sticker_user_prefs_prefscache",
+      "community": 11,
+      "norm_label": "prefscache"
+    },
+    {
+      "label": "cleanPhoneNumber()",
+      "file_type": "code",
+      "source_file": "src/sticker/user-prefs.js",
+      "source_location": "L12",
+      "id": "sticker_user_prefs_cleanphonenumber",
+      "community": 11,
+      "norm_label": "cleanphonenumber()"
+    },
+    {
+      "label": "getDefaultPrefs()",
+      "file_type": "code",
+      "source_file": "src/sticker/user-prefs.js",
+      "source_location": "L20",
+      "id": "sticker_user_prefs_getdefaultprefs",
+      "community": 11,
+      "norm_label": "getdefaultprefs()"
+    },
+    {
+      "label": "getPrefsFilePath()",
+      "file_type": "code",
+      "source_file": "src/sticker/user-prefs.js",
+      "source_location": "L34",
+      "id": "sticker_user_prefs_getprefsfilepath",
+      "community": 11,
+      "norm_label": "getprefsfilepath()"
+    },
+    {
+      "label": "getUserPrefs()",
+      "file_type": "code",
+      "source_file": "src/sticker/user-prefs.js",
+      "source_location": "L43",
+      "id": "sticker_user_prefs_getuserprefs",
+      "community": 11,
+      "norm_label": "getuserprefs()"
+    },
+    {
+      "label": "setUserPrefs()",
+      "file_type": "code",
+      "source_file": "src/sticker/user-prefs.js",
+      "source_location": "L74",
+      "id": "sticker_user_prefs_setuserprefs",
+      "community": 11,
+      "norm_label": "setuserprefs()"
+    },
+    {
+      "label": "toggleUserPref()",
+      "file_type": "code",
+      "source_file": "src/sticker/user-prefs.js",
+      "source_location": "L106",
+      "id": "sticker_user_prefs_toggleuserpref",
+      "community": 11,
+      "norm_label": "toggleuserpref()"
+    },
+    {
+      "label": "resetUserPrefs()",
+      "file_type": "code",
+      "source_file": "src/sticker/user-prefs.js",
+      "source_location": "L118",
+      "id": "sticker_user_prefs_resetuserprefs",
+      "community": 11,
+      "norm_label": "resetuserprefs()"
     },
     {
       "label": "DISCLAIMER.md",
@@ -571,10 +841,19 @@
       "norm_label": "visao geral"
     },
     {
+      "label": "Comandos Dispon\u00edveis no Chat Pr\u00f3prio",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L23",
+      "id": "sord_selfsticker_readme_comandos_dispon\u00edveis_no_chat_pr\u00f3prio",
+      "community": 2,
+      "norm_label": "comandos disponiveis no chat proprio"
+    },
+    {
       "label": "Garantia de Privacidade Zero-Sight",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L20",
+      "source_location": "L33",
       "id": "sord_selfsticker_readme_garantia_de_privacidade_zero_sight",
       "community": 2,
       "norm_label": "garantia de privacidade zero-sight"
@@ -583,7 +862,7 @@
       "label": "\ud83c\uddfa\ud83c\uddf8 English",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L27",
+      "source_location": "L40",
       "id": "sord_selfsticker_readme_english",
       "community": 2,
       "norm_label": "\ud83c\uddfa\ud83c\uddf8 english"
@@ -592,16 +871,25 @@
       "label": "Overview",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L29",
+      "source_location": "L42",
       "id": "sord_selfsticker_readme_overview",
       "community": 2,
       "norm_label": "overview"
     },
     {
+      "label": "Self-Chat Commands",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L51",
+      "id": "sord_selfsticker_readme_self_chat_commands",
+      "community": 2,
+      "norm_label": "self-chat commands"
+    },
+    {
       "label": "Zero-Sight Security Policy",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L35",
+      "source_location": "L61",
       "id": "sord_selfsticker_readme_zero_sight_security_policy",
       "community": 2,
       "norm_label": "zero-sight security policy"
@@ -610,7 +898,7 @@
       "label": "\ud83d\udee0\ufe0f Instala\u00e7\u00e3o e Execu\u00e7\u00e3o / Setup & Run",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L42",
+      "source_location": "L68",
       "id": "sord_selfsticker_readme_instala\u00e7\u00e3o_e_execu\u00e7\u00e3o_setup_run",
       "community": 4,
       "norm_label": "\ud83d\udee0\ufe0f instalacao e execucao / setup & run"
@@ -619,7 +907,7 @@
       "label": "Requisitos / Prerequisites",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L44",
+      "source_location": "L70",
       "id": "sord_selfsticker_readme_requisitos_prerequisites",
       "community": 4,
       "norm_label": "requisitos / prerequisites"
@@ -628,7 +916,7 @@
       "label": "1. Clonar e Instalar / Clone & Install",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L48",
+      "source_location": "L74",
       "id": "sord_selfsticker_readme_1_clonar_e_instalar_clone_install",
       "community": 4,
       "norm_label": "1. clonar e instalar / clone & install"
@@ -637,7 +925,7 @@
       "label": "code:bash (git clone https://github.com/sordinni/sord-selfsticker.git)",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L49",
+      "source_location": "L75",
       "id": "sord_selfsticker_readme_codeblock_1",
       "community": 4,
       "norm_label": "code:bash (git clone https://github.com/sordinni/sord-selfsticker.git)"
@@ -646,7 +934,7 @@
       "label": "2. Configura\u00e7\u00e3o / Configuration",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L55",
+      "source_location": "L81",
       "id": "sord_selfsticker_readme_2_configura\u00e7\u00e3o_configuration",
       "community": 4,
       "norm_label": "2. configuracao / configuration"
@@ -655,7 +943,7 @@
       "label": "code:bash (cp .env.example .env)",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L57",
+      "source_location": "L83",
       "id": "sord_selfsticker_readme_codeblock_2",
       "community": 4,
       "norm_label": "code:bash (cp .env.example .env)"
@@ -664,7 +952,7 @@
       "label": "3. Iniciar o Servidor / Start the Server",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L61",
+      "source_location": "L87",
       "id": "sord_selfsticker_readme_3_iniciar_o_servidor_start_the_server",
       "community": 4,
       "norm_label": "3. iniciar o servidor / start the server"
@@ -673,7 +961,7 @@
       "label": "code:bash (npm start)",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L62",
+      "source_location": "L88",
       "id": "sord_selfsticker_readme_codeblock_3",
       "community": 4,
       "norm_label": "code:bash (npm start)"
@@ -682,79 +970,106 @@
       "label": "\ud83d\udce1 API Endpoints",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L69",
+      "source_location": "L95",
       "id": "sord_selfsticker_readme_api_endpoints",
-      "community": 5,
+      "community": 2,
       "norm_label": "\ud83d\udce1 api endpoints"
     },
     {
       "label": "`POST /api/sejabot/pair`",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L71",
+      "source_location": "L97",
       "id": "sord_selfsticker_readme_post_api_sejabot_pair",
-      "community": 5,
+      "community": 2,
       "norm_label": "`post /api/sejabot/pair`"
     },
     {
       "label": "code:json ({ \"phone\": \"+5511999998888\" })",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L74",
+      "source_location": "L100",
       "id": "sord_selfsticker_readme_codeblock_4",
-      "community": 5,
+      "community": 2,
       "norm_label": "code:json ({ \"phone\": \"+5511999998888\" })"
     },
     {
       "label": "code:json ({)",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L78",
+      "source_location": "L104",
       "id": "sord_selfsticker_readme_codeblock_5",
-      "community": 5,
+      "community": 2,
       "norm_label": "code:json ({)"
     },
     {
       "label": "`GET /api/sejabot/status?sessionId=5511999998888`",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L87",
+      "source_location": "L113",
       "id": "sord_selfsticker_readme_get_api_sejabot_status_sessionid_5511999998888",
-      "community": 5,
+      "community": 2,
       "norm_label": "`get /api/sejabot/status?sessionid=5511999998888`"
     },
     {
       "label": "code:json ({)",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L90",
+      "source_location": "L116",
       "id": "sord_selfsticker_readme_codeblock_6",
-      "community": 5,
+      "community": 2,
       "norm_label": "code:json ({)"
     },
     {
       "label": "`POST /api/sejabot/disconnect`",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L98",
+      "source_location": "L124",
       "id": "sord_selfsticker_readme_post_api_sejabot_disconnect",
-      "community": 5,
+      "community": 2,
       "norm_label": "`post /api/sejabot/disconnect`"
     },
     {
       "label": "code:json ({ \"sessionId\": \"5511999998888\" })",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L101",
+      "source_location": "L127",
       "id": "sord_selfsticker_readme_codeblock_7",
-      "community": 5,
+      "community": 2,
       "norm_label": "code:json ({ \"sessionid\": \"5511999998888\" })"
+    },
+    {
+      "label": "`POST /api/sejabot/enviar`",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L131",
+      "id": "sord_selfsticker_readme_post_api_sejabot_enviar",
+      "community": 2,
+      "norm_label": "`post /api/sejabot/enviar`"
+    },
+    {
+      "label": "code:json ({ \"message\": \"O bot foi atualizado com novas fun\u00e7\u00f5es!\" })",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L134",
+      "id": "sord_selfsticker_readme_codeblock_8",
+      "community": 2,
+      "norm_label": "code:json ({ \"message\": \"o bot foi atualizado com novas funcoes!\" })"
+    },
+    {
+      "label": "code:json ({)",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L138",
+      "id": "sord_selfsticker_readme_codeblock_9",
+      "community": 2,
+      "norm_label": "code:json ({)"
     },
     {
       "label": "\ud83d\udc33 Docker Deployment",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L107",
+      "source_location": "L150",
       "id": "sord_selfsticker_readme_docker_deployment",
       "community": 2,
       "norm_label": "\ud83d\udc33 docker deployment"
@@ -763,8 +1078,8 @@
       "label": "code:bash (docker-compose up -d --build)",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L109",
-      "id": "sord_selfsticker_readme_codeblock_8",
+      "source_location": "L152",
+      "id": "sord_selfsticker_readme_codeblock_10",
       "community": 2,
       "norm_label": "code:bash (docker-compose up -d --build)"
     },
@@ -772,7 +1087,7 @@
       "label": "\ud83d\udcc4 Licen\u00e7a / License",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L115",
+      "source_location": "L158",
       "id": "sord_selfsticker_readme_licen\u00e7a_license",
       "community": 2,
       "norm_label": "\ud83d\udcc4 licenca / license"
@@ -857,9 +1172,9 @@
       "source_file": "package.json",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_json",
-      "target": "sord_selfsticker_package_name",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_package_name"
     },
     {
       "relation": "contains",
@@ -867,9 +1182,9 @@
       "source_file": "package.json",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_json",
-      "target": "sord_selfsticker_package_version",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_package_version"
     },
     {
       "relation": "contains",
@@ -877,9 +1192,9 @@
       "source_file": "package.json",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_json",
-      "target": "sord_selfsticker_package_description",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_package_description"
     },
     {
       "relation": "contains",
@@ -887,9 +1202,9 @@
       "source_file": "package.json",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_json",
-      "target": "sord_selfsticker_package_main",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_package_main"
     },
     {
       "relation": "contains",
@@ -897,9 +1212,9 @@
       "source_file": "package.json",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_json",
-      "target": "sord_selfsticker_package_type",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_package_type"
     },
     {
       "relation": "contains",
@@ -907,9 +1222,9 @@
       "source_file": "package.json",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_json",
-      "target": "sord_selfsticker_package_scripts",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_package_scripts"
     },
     {
       "relation": "contains",
@@ -917,9 +1232,9 @@
       "source_file": "package.json",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_json",
-      "target": "sord_selfsticker_package_keywords",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_package_keywords"
     },
     {
       "relation": "contains",
@@ -927,9 +1242,9 @@
       "source_file": "package.json",
       "source_location": "L21",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_json",
-      "target": "sord_selfsticker_package_author",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_package_author"
     },
     {
       "relation": "contains",
@@ -937,9 +1252,9 @@
       "source_file": "package.json",
       "source_location": "L22",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_json",
-      "target": "sord_selfsticker_package_license",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_package_license"
     },
     {
       "relation": "contains",
@@ -947,9 +1262,9 @@
       "source_file": "package.json",
       "source_location": "L23",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "package_json",
-      "target": "sord_selfsticker_package_dependencies",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_package_dependencies"
     },
     {
       "relation": "contains",
@@ -957,9 +1272,9 @@
       "source_file": "package.json",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_package_scripts",
-      "target": "sord_selfsticker_package_scripts_start",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_package_scripts_start"
     },
     {
       "relation": "contains",
@@ -967,9 +1282,9 @@
       "source_file": "package.json",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_package_scripts",
-      "target": "sord_selfsticker_package_scripts_dev",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_package_scripts_dev"
     },
     {
       "relation": "contains",
@@ -977,9 +1292,9 @@
       "source_file": "package.json",
       "source_location": "L24",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_package_dependencies",
-      "target": "sord_selfsticker_package_dependencies_whiskeysockets_baileys",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_package_dependencies_whiskeysockets_baileys"
     },
     {
       "relation": "contains",
@@ -987,9 +1302,9 @@
       "source_file": "package.json",
       "source_location": "L25",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_package_dependencies",
-      "target": "sord_selfsticker_package_dependencies_cors",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_package_dependencies_cors"
     },
     {
       "relation": "contains",
@@ -997,9 +1312,9 @@
       "source_file": "package.json",
       "source_location": "L26",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_package_dependencies",
-      "target": "sord_selfsticker_package_dependencies_express",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_package_dependencies_express"
     },
     {
       "relation": "contains",
@@ -1007,9 +1322,9 @@
       "source_file": "package.json",
       "source_location": "L27",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_package_dependencies",
-      "target": "sord_selfsticker_package_dependencies_libphonenumber_js",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_package_dependencies_libphonenumber_js"
     },
     {
       "relation": "contains",
@@ -1017,9 +1332,9 @@
       "source_file": "package.json",
       "source_location": "L28",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_package_dependencies",
-      "target": "sord_selfsticker_package_dependencies_node_webpmux",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_package_dependencies_node_webpmux"
     },
     {
       "relation": "contains",
@@ -1027,9 +1342,9 @@
       "source_file": "package.json",
       "source_location": "L29",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_package_dependencies",
-      "target": "sord_selfsticker_package_dependencies_pino",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_package_dependencies_pino"
     },
     {
       "relation": "contains",
@@ -1037,9 +1352,9 @@
       "source_file": "package.json",
       "source_location": "L30",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_package_dependencies",
-      "target": "sord_selfsticker_package_dependencies_pino_pretty",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_package_dependencies_pino_pretty"
     },
     {
       "relation": "contains",
@@ -1047,9 +1362,9 @@
       "source_file": "package.json",
       "source_location": "L31",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_package_dependencies",
-      "target": "sord_selfsticker_package_dependencies_sharp",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_package_dependencies_sharp"
     },
     {
       "relation": "contains",
@@ -1057,9 +1372,9 @@
       "source_file": "src/config.js",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_config_js",
-      "target": "src_config_dirname",
-      "confidence_score": 1.0
+      "target": "src_config_dirname"
     },
     {
       "relation": "contains",
@@ -1067,9 +1382,9 @@
       "source_file": "src/config.js",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_config_js",
-      "target": "src_config_config",
-      "confidence_score": 1.0
+      "target": "src_config_config"
     },
     {
       "relation": "imports_from",
@@ -1078,9 +1393,9 @@
       "source_file": "src/index.js",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_index_js",
-      "target": "src_config_js",
-      "confidence_score": 1.0
+      "target": "src_config_js"
     },
     {
       "relation": "imports_from",
@@ -1089,7 +1404,18 @@
       "source_file": "src/baileys/session-manager.js",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_baileys_session_manager_js",
+      "target": "src_config_js"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/zero-sight.js",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "src_baileys_zero_sight_js",
       "target": "src_config_js",
       "confidence_score": 1.0
     },
@@ -1100,9 +1426,9 @@
       "source_file": "src/security/sanitizer.js",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_security_sanitizer_js",
-      "target": "src_config_js",
-      "confidence_score": 1.0
+      "target": "src_config_js"
     },
     {
       "relation": "imports_from",
@@ -1111,9 +1437,20 @@
       "source_file": "src/sticker/converter.js",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_sticker_converter_js",
-      "target": "src_config_js",
-      "confidence_score": 1.0
+      "target": "src_config_js"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/sticker/user-prefs.js",
+      "source_location": "L3",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_sticker_user_prefs_js",
+      "target": "src_config_js"
     },
     {
       "relation": "imports",
@@ -1122,9 +1459,9 @@
       "source_file": "src/index.js",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_index_js",
-      "target": "src_config_config",
-      "confidence_score": 1.0
+      "target": "src_config_config"
     },
     {
       "relation": "imports",
@@ -1133,7 +1470,18 @@
       "source_file": "src/baileys/session-manager.js",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_baileys_session_manager_js",
+      "target": "src_config_config"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/zero-sight.js",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "src_baileys_zero_sight_js",
       "target": "src_config_config",
       "confidence_score": 1.0
     },
@@ -1144,9 +1492,9 @@
       "source_file": "src/security/sanitizer.js",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_security_sanitizer_js",
-      "target": "src_config_config",
-      "confidence_score": 1.0
+      "target": "src_config_config"
     },
     {
       "relation": "imports",
@@ -1155,9 +1503,20 @@
       "source_file": "src/sticker/converter.js",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_sticker_converter_js",
-      "target": "src_config_config",
-      "confidence_score": 1.0
+      "target": "src_config_config"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/sticker/user-prefs.js",
+      "source_location": "L3",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_sticker_user_prefs_js",
+      "target": "src_config_config"
     },
     {
       "relation": "imports_from",
@@ -1166,9 +1525,9 @@
       "source_file": "src/index.js",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_index_js",
-      "target": "src_baileys_session_manager_js",
-      "confidence_score": 1.0
+      "target": "src_baileys_session_manager_js"
     },
     {
       "relation": "imports",
@@ -1177,9 +1536,9 @@
       "source_file": "src/index.js",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_index_js",
-      "target": "baileys_session_manager_sessionmanager",
-      "confidence_score": 1.0
+      "target": "baileys_session_manager_sessionmanager"
     },
     {
       "relation": "imports_from",
@@ -1188,9 +1547,9 @@
       "source_file": "src/index.js",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_index_js",
-      "target": "src_security_sanitizer_js",
-      "confidence_score": 1.0
+      "target": "src_security_sanitizer_js"
     },
     {
       "relation": "imports",
@@ -1199,9 +1558,9 @@
       "source_file": "src/index.js",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_index_js",
-      "target": "security_sanitizer_validateandcleanphone",
-      "confidence_score": 1.0
+      "target": "security_sanitizer_validateandcleanphone"
     },
     {
       "relation": "imports",
@@ -1210,9 +1569,9 @@
       "source_file": "src/index.js",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_index_js",
-      "target": "security_sanitizer_checkpairinglimits",
-      "confidence_score": 1.0
+      "target": "security_sanitizer_checkpairinglimits"
     },
     {
       "relation": "contains",
@@ -1220,9 +1579,9 @@
       "source_file": "src/index.js",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_index_js",
-      "target": "src_index_app",
-      "confidence_score": 1.0
+      "target": "src_index_app"
     },
     {
       "relation": "contains",
@@ -1230,9 +1589,9 @@
       "source_file": "src/index.js",
       "source_location": "L47",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_index_js",
-      "target": "src_index_validation",
-      "confidence_score": 1.0
+      "target": "src_index_validation"
     },
     {
       "relation": "contains",
@@ -1240,9 +1599,9 @@
       "source_file": "src/index.js",
       "source_location": "L55",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_index_js",
-      "target": "src_index_ratecheck",
-      "confidence_score": 1.0
+      "target": "src_index_ratecheck"
     },
     {
       "relation": "contains",
@@ -1250,9 +1609,9 @@
       "source_file": "src/index.js",
       "source_location": "L113",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_index_js",
-      "target": "src_index_cleanphone",
-      "confidence_score": 1.0
+      "target": "src_index_cleanphone"
     },
     {
       "relation": "contains",
@@ -1260,8 +1619,18 @@
       "source_file": "src/index.js",
       "source_location": "L91",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_index_js",
-      "target": "src_index_status",
+      "target": "src_index_status"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.js",
+      "source_location": "L133",
+      "weight": 1.0,
+      "source": "src_index_js",
+      "target": "src_index_text",
       "confidence_score": 1.0
     },
     {
@@ -1270,9 +1639,115 @@
       "source_file": "src/index.js",
       "source_location": "L126",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_index_js",
-      "target": "src_index_main",
-      "confidence_score": 1.0
+      "target": "src_index_main"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/connection.js",
+      "source_location": "L3",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_baileys_connection_js",
+      "target": "baileys_connection_baileysversion"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/connection.js",
+      "source_location": "L52",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_baileys_connection_js",
+      "target": "baileys_connection_createconnection"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/session-manager.js",
+      "source_location": "L9",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_baileys_session_manager_js",
+      "target": "src_baileys_connection_js"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/connection.js",
+      "source_location": "L4",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "baileys_connection_baileysversion",
+      "target": "baileys_connection_baileysversion_constructor"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/connection.js",
+      "source_location": "L12",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "baileys_connection_baileysversion",
+      "target": "baileys_connection_baileysversion_fetchversion"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/session-manager.js",
+      "source_location": "L9",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_baileys_session_manager_js",
+      "target": "baileys_connection_baileysversion"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/session-manager.js",
+      "source_location": "L9",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_baileys_session_manager_js",
+      "target": "baileys_connection_createconnection"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/baileys/session-manager.js",
+      "source_location": "L81",
+      "weight": 1.0,
+      "source": "baileys_session_manager_sessionmanager_connectsocket",
+      "target": "baileys_connection_createconnection"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/session-manager.js",
+      "source_location": "L10",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_baileys_session_manager_js",
+      "target": "src_baileys_socket_js"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/session-manager.js",
+      "source_location": "L10",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_baileys_session_manager_js",
+      "target": "baileys_socket_naruyaizumi"
     },
     {
       "relation": "imports_from",
@@ -1281,9 +1756,9 @@
       "source_file": "src/baileys/session-manager.js",
       "source_location": "L13",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_baileys_session_manager_js",
-      "target": "src_baileys_zero_sight_js",
-      "confidence_score": 1.0
+      "target": "src_baileys_zero_sight_js"
     },
     {
       "relation": "imports",
@@ -1292,9 +1767,9 @@
       "source_file": "src/baileys/session-manager.js",
       "source_location": "L13",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_baileys_session_manager_js",
-      "target": "baileys_zero_sight_attachzerosighthandler",
-      "confidence_score": 1.0
+      "target": "baileys_zero_sight_attachzerosighthandler"
     },
     {
       "relation": "contains",
@@ -1302,9 +1777,19 @@
       "source_file": "src/baileys/session-manager.js",
       "source_location": "L15",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_baileys_session_manager_js",
-      "target": "baileys_session_manager_logger",
-      "confidence_score": 1.0
+      "target": "baileys_session_manager_logger"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/session-manager.js",
+      "source_location": "L21",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_baileys_session_manager_js",
+      "target": "baileys_session_manager_versionfetcher"
     },
     {
       "relation": "contains",
@@ -1312,9 +1797,9 @@
       "source_file": "src/baileys/session-manager.js",
       "source_location": "L163",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_baileys_session_manager_js",
-      "target": "baileys_session_manager_sessionmanager",
-      "confidence_score": 1.0
+      "target": "baileys_session_manager_sessionmanager"
     },
     {
       "relation": "method",
@@ -1322,9 +1807,9 @@
       "source_file": "src/baileys/session-manager.js",
       "source_location": "L24",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "baileys_session_manager_sessionmanager",
-      "target": "baileys_session_manager_sessionmanager_constructor",
-      "confidence_score": 1.0
+      "target": "baileys_session_manager_sessionmanager_constructor"
     },
     {
       "relation": "method",
@@ -1332,9 +1817,9 @@
       "source_file": "src/baileys/session-manager.js",
       "source_location": "L29",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "baileys_session_manager_sessionmanager",
-      "target": "baileys_session_manager_sessionmanager_init",
-      "confidence_score": 1.0
+      "target": "baileys_session_manager_sessionmanager_init"
     },
     {
       "relation": "method",
@@ -1342,9 +1827,19 @@
       "source_file": "src/baileys/session-manager.js",
       "source_location": "L33",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "baileys_session_manager_sessionmanager",
-      "target": "baileys_session_manager_sessionmanager_getsessionpath",
-      "confidence_score": 1.0
+      "target": "baileys_session_manager_sessionmanager_getsessionpath"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/session-manager.js",
+      "source_location": "L62",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "baileys_session_manager_sessionmanager",
+      "target": "baileys_session_manager_sessionmanager_connectsocket"
     },
     {
       "relation": "method",
@@ -1352,9 +1847,9 @@
       "source_file": "src/baileys/session-manager.js",
       "source_location": "L42",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "baileys_session_manager_sessionmanager",
-      "target": "baileys_session_manager_sessionmanager_startpairing",
-      "confidence_score": 1.0
+      "target": "baileys_session_manager_sessionmanager_startpairing"
     },
     {
       "relation": "method",
@@ -1362,9 +1857,9 @@
       "source_file": "src/baileys/session-manager.js",
       "source_location": "L124",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "baileys_session_manager_sessionmanager",
-      "target": "baileys_session_manager_sessionmanager_getstatus",
-      "confidence_score": 1.0
+      "target": "baileys_session_manager_sessionmanager_getstatus"
     },
     {
       "relation": "method",
@@ -1372,8 +1867,49 @@
       "source_file": "src/baileys/session-manager.js",
       "source_location": "L140",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "baileys_session_manager_sessionmanager",
-      "target": "baileys_session_manager_sessionmanager_disconnect",
+      "target": "baileys_session_manager_sessionmanager_disconnect"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/session-manager.js",
+      "source_location": "L302",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "baileys_session_manager_sessionmanager",
+      "target": "baileys_session_manager_sessionmanager_disconnectall"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/session-manager.js",
+      "source_location": "L336",
+      "weight": 1.0,
+      "source": "baileys_session_manager_sessionmanager",
+      "target": "baileys_session_manager_sessionmanager_getregisteredusers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/session-manager.js",
+      "source_location": "L384",
+      "weight": 1.0,
+      "source": "baileys_session_manager_sessionmanager",
+      "target": "baileys_session_manager_sessionmanager_broadcast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/zero-sight.js",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "src_baileys_zero_sight_js",
+      "target": "baileys_session_manager_sessionmanager",
       "confidence_score": 1.0
     },
     {
@@ -1381,11 +1917,22 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/baileys/session-manager.js",
-      "source_location": "L49",
+      "source_location": "L42",
       "weight": 1.0,
-      "source": "baileys_session_manager_sessionmanager_startpairing",
-      "target": "baileys_session_manager_sessionmanager_getsessionpath",
-      "confidence_score": 1.0
+      "confidence_score": 1.0,
+      "source": "baileys_session_manager_sessionmanager_init",
+      "target": "baileys_session_manager_sessionmanager_connectsocket"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/session-manager.js",
+      "source_location": "L63",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "baileys_session_manager_sessionmanager_connectsocket",
+      "target": "baileys_session_manager_sessionmanager_getsessionpath"
     },
     {
       "relation": "calls",
@@ -1394,9 +1941,63 @@
       "source_file": "src/baileys/session-manager.js",
       "source_location": "L153",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "baileys_session_manager_sessionmanager_disconnect",
-      "target": "baileys_session_manager_sessionmanager_getsessionpath",
+      "target": "baileys_session_manager_sessionmanager_getsessionpath"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/session-manager.js",
+      "source_location": "L49",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "baileys_session_manager_sessionmanager_startpairing",
+      "target": "baileys_session_manager_sessionmanager_getsessionpath"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/session-manager.js",
+      "source_location": "L196",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "baileys_session_manager_sessionmanager_startpairing",
+      "target": "baileys_session_manager_sessionmanager_connectsocket"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/baileys/session-manager.js",
+      "source_location": "L88",
+      "weight": 1.0,
+      "source": "baileys_session_manager_sessionmanager_connectsocket",
+      "target": "baileys_socket_naruyaizumi"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/session-manager.js",
+      "source_location": "L385",
+      "weight": 1.0,
+      "source": "baileys_session_manager_sessionmanager_broadcast",
+      "target": "baileys_session_manager_sessionmanager_getregisteredusers",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/socket.js",
+      "source_location": "L7",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_baileys_socket_js",
+      "target": "baileys_socket_naruyaizumi"
     },
     {
       "relation": "imports_from",
@@ -1405,9 +2006,9 @@
       "source_file": "src/baileys/zero-sight.js",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_baileys_zero_sight_js",
-      "target": "src_sticker_converter_js",
-      "confidence_score": 1.0
+      "target": "src_sticker_converter_js"
     },
     {
       "relation": "imports",
@@ -1416,9 +2017,9 @@
       "source_file": "src/baileys/zero-sight.js",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_baileys_zero_sight_js",
-      "target": "sticker_converter_createstickerimage",
-      "confidence_score": 1.0
+      "target": "sticker_converter_createstickerimage"
     },
     {
       "relation": "imports",
@@ -1427,9 +2028,145 @@
       "source_file": "src/baileys/zero-sight.js",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_baileys_zero_sight_js",
-      "target": "sticker_converter_createstickervideo",
-      "confidence_score": 1.0
+      "target": "sticker_converter_createstickervideo"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/zero-sight.js",
+      "source_location": "L8",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_baileys_zero_sight_js",
+      "target": "sticker_converter_setstickermetadata"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/zero-sight.js",
+      "source_location": "L13",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_baileys_zero_sight_js",
+      "target": "src_sticker_user_prefs_js"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/zero-sight.js",
+      "source_location": "L13",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_baileys_zero_sight_js",
+      "target": "sticker_user_prefs_getuserprefs"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/zero-sight.js",
+      "source_location": "L13",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_baileys_zero_sight_js",
+      "target": "sticker_user_prefs_setuserprefs"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/zero-sight.js",
+      "source_location": "L13",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_baileys_zero_sight_js",
+      "target": "sticker_user_prefs_toggleuserpref"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/zero-sight.js",
+      "source_location": "L13",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_baileys_zero_sight_js",
+      "target": "sticker_user_prefs_resetuserprefs"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/zero-sight.js",
+      "source_location": "L20",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_baileys_zero_sight_js",
+      "target": "baileys_zero_sight_silentlogger"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/zero-sight.js",
+      "source_location": "L21",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_baileys_zero_sight_js",
+      "target": "baileys_zero_sight_botsentmsgids"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/zero-sight.js",
+      "source_location": "L27",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_baileys_zero_sight_js",
+      "target": "baileys_zero_sight_trackbotmessage"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/zero-sight.js",
+      "source_location": "L41",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_baileys_zero_sight_js",
+      "target": "baileys_zero_sight_sendreply"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/zero-sight.js",
+      "source_location": "L58",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_baileys_zero_sight_js",
+      "target": "baileys_zero_sight_sendsticker"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/zero-sight.js",
+      "source_location": "L73",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_baileys_zero_sight_js",
+      "target": "baileys_zero_sight_extracttext"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/zero-sight.js",
+      "source_location": "L93",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_baileys_zero_sight_js",
+      "target": "baileys_zero_sight_downloadmedia"
     },
     {
       "relation": "contains",
@@ -1437,9 +2174,31 @@
       "source_file": "src/baileys/zero-sight.js",
       "source_location": "L15",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_baileys_zero_sight_js",
-      "target": "baileys_zero_sight_attachzerosighthandler",
-      "confidence_score": 1.0
+      "target": "baileys_zero_sight_attachzerosighthandler"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/zero-sight.js",
+      "source_location": "L44",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "baileys_zero_sight_sendreply",
+      "target": "baileys_zero_sight_trackbotmessage"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/baileys/zero-sight.js",
+      "source_location": "L61",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "baileys_zero_sight_sendsticker",
+      "target": "baileys_zero_sight_trackbotmessage"
     },
     {
       "relation": "contains",
@@ -1447,9 +2206,9 @@
       "source_file": "src/security/sanitizer.js",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_security_sanitizer_js",
-      "target": "security_sanitizer_iprequestmap",
-      "confidence_score": 1.0
+      "target": "security_sanitizer_iprequestmap"
     },
     {
       "relation": "contains",
@@ -1457,9 +2216,9 @@
       "source_file": "src/security/sanitizer.js",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_security_sanitizer_js",
-      "target": "security_sanitizer_phonecooldownmap",
-      "confidence_score": 1.0
+      "target": "security_sanitizer_phonecooldownmap"
     },
     {
       "relation": "contains",
@@ -1467,9 +2226,9 @@
       "source_file": "src/security/sanitizer.js",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_security_sanitizer_js",
-      "target": "security_sanitizer_validateandcleanphone",
-      "confidence_score": 1.0
+      "target": "security_sanitizer_validateandcleanphone"
     },
     {
       "relation": "contains",
@@ -1477,9 +2236,9 @@
       "source_file": "src/security/sanitizer.js",
       "source_location": "L36",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_security_sanitizer_js",
-      "target": "security_sanitizer_checkpairinglimits",
-      "confidence_score": 1.0
+      "target": "security_sanitizer_checkpairinglimits"
     },
     {
       "relation": "contains",
@@ -1487,9 +2246,9 @@
       "source_file": "src/sticker/converter.js",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_sticker_converter_js",
-      "target": "sticker_converter_execfilepromise",
-      "confidence_score": 1.0
+      "target": "sticker_converter_execfilepromise"
     },
     {
       "relation": "contains",
@@ -1497,9 +2256,9 @@
       "source_file": "src/sticker/converter.js",
       "source_location": "L20",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_sticker_converter_js",
-      "target": "sticker_converter_createexifbuffer",
-      "confidence_score": 1.0
+      "target": "sticker_converter_createexifbuffer"
     },
     {
       "relation": "contains",
@@ -1507,9 +2266,19 @@
       "source_file": "src/sticker/converter.js",
       "source_location": "L42",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_sticker_converter_js",
-      "target": "sticker_converter_addexiftowebp",
-      "confidence_score": 1.0
+      "target": "sticker_converter_addexiftowebp"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/sticker/converter.js",
+      "source_location": "L56",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_sticker_converter_js",
+      "target": "sticker_converter_setstickermetadata"
     },
     {
       "relation": "contains",
@@ -1517,9 +2286,9 @@
       "source_file": "src/sticker/converter.js",
       "source_location": "L57",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_sticker_converter_js",
-      "target": "sticker_converter_createstickerimage",
-      "confidence_score": 1.0
+      "target": "sticker_converter_createstickerimage"
     },
     {
       "relation": "contains",
@@ -1527,9 +2296,9 @@
       "source_file": "src/sticker/converter.js",
       "source_location": "L86",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_sticker_converter_js",
-      "target": "sticker_converter_createstickervideo",
-      "confidence_score": 1.0
+      "target": "sticker_converter_createstickervideo"
     },
     {
       "relation": "calls",
@@ -1538,9 +2307,20 @@
       "source_file": "src/sticker/converter.js",
       "source_location": "L131",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sticker_converter_createstickervideo",
-      "target": "sticker_converter_execfilepromise",
-      "confidence_score": 1.0
+      "target": "sticker_converter_execfilepromise"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/sticker/converter.js",
+      "source_location": "L57",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sticker_converter_setstickermetadata",
+      "target": "sticker_converter_createexifbuffer"
     },
     {
       "relation": "calls",
@@ -1549,9 +2329,9 @@
       "source_file": "src/sticker/converter.js",
       "source_location": "L73",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sticker_converter_createstickerimage",
-      "target": "sticker_converter_createexifbuffer",
-      "confidence_score": 1.0
+      "target": "sticker_converter_createexifbuffer"
     },
     {
       "relation": "calls",
@@ -1560,9 +2340,20 @@
       "source_file": "src/sticker/converter.js",
       "source_location": "L152",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sticker_converter_createstickervideo",
-      "target": "sticker_converter_createexifbuffer",
-      "confidence_score": 1.0
+      "target": "sticker_converter_createexifbuffer"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/sticker/converter.js",
+      "source_location": "L58",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sticker_converter_setstickermetadata",
+      "target": "sticker_converter_addexiftowebp"
     },
     {
       "relation": "calls",
@@ -1571,9 +2362,9 @@
       "source_file": "src/sticker/converter.js",
       "source_location": "L74",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sticker_converter_createstickerimage",
-      "target": "sticker_converter_addexiftowebp",
-      "confidence_score": 1.0
+      "target": "sticker_converter_addexiftowebp"
     },
     {
       "relation": "calls",
@@ -1582,9 +2373,221 @@
       "source_file": "src/sticker/converter.js",
       "source_location": "L153",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sticker_converter_createstickervideo",
-      "target": "sticker_converter_addexiftowebp",
-      "confidence_score": 1.0
+      "target": "sticker_converter_addexiftowebp"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/sticker/user-prefs.js",
+      "source_location": "L5",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_sticker_user_prefs_js",
+      "target": "sticker_user_prefs_prefscache"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/sticker/user-prefs.js",
+      "source_location": "L12",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_sticker_user_prefs_js",
+      "target": "sticker_user_prefs_cleanphonenumber"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/sticker/user-prefs.js",
+      "source_location": "L20",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_sticker_user_prefs_js",
+      "target": "sticker_user_prefs_getdefaultprefs"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/sticker/user-prefs.js",
+      "source_location": "L34",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_sticker_user_prefs_js",
+      "target": "sticker_user_prefs_getprefsfilepath"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/sticker/user-prefs.js",
+      "source_location": "L43",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_sticker_user_prefs_js",
+      "target": "sticker_user_prefs_getuserprefs"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/sticker/user-prefs.js",
+      "source_location": "L74",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_sticker_user_prefs_js",
+      "target": "sticker_user_prefs_setuserprefs"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/sticker/user-prefs.js",
+      "source_location": "L106",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_sticker_user_prefs_js",
+      "target": "sticker_user_prefs_toggleuserpref"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/sticker/user-prefs.js",
+      "source_location": "L118",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_sticker_user_prefs_js",
+      "target": "sticker_user_prefs_resetuserprefs"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/sticker/user-prefs.js",
+      "source_location": "L44",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sticker_user_prefs_getuserprefs",
+      "target": "sticker_user_prefs_cleanphonenumber"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/sticker/user-prefs.js",
+      "source_location": "L75",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sticker_user_prefs_setuserprefs",
+      "target": "sticker_user_prefs_cleanphonenumber"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/sticker/user-prefs.js",
+      "source_location": "L119",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sticker_user_prefs_resetuserprefs",
+      "target": "sticker_user_prefs_cleanphonenumber"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/sticker/user-prefs.js",
+      "source_location": "L46",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sticker_user_prefs_getuserprefs",
+      "target": "sticker_user_prefs_getdefaultprefs"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/sticker/user-prefs.js",
+      "source_location": "L77",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sticker_user_prefs_setuserprefs",
+      "target": "sticker_user_prefs_getdefaultprefs"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/sticker/user-prefs.js",
+      "source_location": "L120",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sticker_user_prefs_resetuserprefs",
+      "target": "sticker_user_prefs_getdefaultprefs"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/sticker/user-prefs.js",
+      "source_location": "L53",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sticker_user_prefs_getuserprefs",
+      "target": "sticker_user_prefs_getprefsfilepath"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/sticker/user-prefs.js",
+      "source_location": "L89",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sticker_user_prefs_setuserprefs",
+      "target": "sticker_user_prefs_getprefsfilepath"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/sticker/user-prefs.js",
+      "source_location": "L80",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sticker_user_prefs_setuserprefs",
+      "target": "sticker_user_prefs_getuserprefs"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/sticker/user-prefs.js",
+      "source_location": "L107",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sticker_user_prefs_toggleuserpref",
+      "target": "sticker_user_prefs_getuserprefs"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/sticker/user-prefs.js",
+      "source_location": "L109",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sticker_user_prefs_toggleuserpref",
+      "target": "sticker_user_prefs_setuserprefs"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/sticker/user-prefs.js",
+      "source_location": "L121",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sticker_user_prefs_resetuserprefs",
+      "target": "sticker_user_prefs_setuserprefs"
     },
     {
       "relation": "contains",
@@ -1592,9 +2595,9 @@
       "source_file": "DISCLAIMER.md",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "disclaimer_md",
-      "target": "sord_selfsticker_disclaimer_legal_disclaimer_terms_of_use",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_disclaimer_legal_disclaimer_terms_of_use"
     },
     {
       "relation": "contains",
@@ -1602,9 +2605,9 @@
       "source_file": "DISCLAIMER.md",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_disclaimer_legal_disclaimer_terms_of_use",
-      "target": "sord_selfsticker_disclaimer_1_non_affiliation_with_whatsapp_meta",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_disclaimer_1_non_affiliation_with_whatsapp_meta"
     },
     {
       "relation": "contains",
@@ -1612,9 +2615,9 @@
       "source_file": "DISCLAIMER.md",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_disclaimer_legal_disclaimer_terms_of_use",
-      "target": "sord_selfsticker_disclaimer_2_terms_of_service_account_safety",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_disclaimer_2_terms_of_service_account_safety"
     },
     {
       "relation": "contains",
@@ -1622,9 +2625,9 @@
       "source_file": "DISCLAIMER.md",
       "source_location": "L16",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_disclaimer_legal_disclaimer_terms_of_use",
-      "target": "sord_selfsticker_disclaimer_3_privacy_zero_sight_architecture",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_disclaimer_3_privacy_zero_sight_architecture"
     },
     {
       "relation": "contains",
@@ -1632,9 +2635,9 @@
       "source_file": "DISCLAIMER.md",
       "source_location": "L22",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_disclaimer_legal_disclaimer_terms_of_use",
-      "target": "sord_selfsticker_disclaimer_4_as_is_warranty",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_disclaimer_4_as_is_warranty"
     },
     {
       "relation": "contains",
@@ -1642,9 +2645,9 @@
       "source_file": "README.md",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "readme_md",
-      "target": "sord_selfsticker_readme_sord_self_sticker_engine",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_readme_sord_self_sticker_engine"
     },
     {
       "relation": "contains",
@@ -1652,9 +2655,9 @@
       "source_file": "README.md",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_readme_sord_self_sticker_engine",
-      "target": "sord_selfsticker_readme_portugu\u00eas",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_readme_portugu\u00eas"
     },
     {
       "relation": "contains",
@@ -1662,9 +2665,9 @@
       "source_file": "README.md",
       "source_location": "L27",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_readme_sord_self_sticker_engine",
-      "target": "sord_selfsticker_readme_english",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_readme_english"
     },
     {
       "relation": "contains",
@@ -1672,9 +2675,9 @@
       "source_file": "README.md",
       "source_location": "L42",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_readme_sord_self_sticker_engine",
-      "target": "sord_selfsticker_readme_instala\u00e7\u00e3o_e_execu\u00e7\u00e3o_setup_run",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_readme_instala\u00e7\u00e3o_e_execu\u00e7\u00e3o_setup_run"
     },
     {
       "relation": "contains",
@@ -1682,9 +2685,9 @@
       "source_file": "README.md",
       "source_location": "L69",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_readme_sord_self_sticker_engine",
-      "target": "sord_selfsticker_readme_api_endpoints",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_readme_api_endpoints"
     },
     {
       "relation": "contains",
@@ -1692,9 +2695,9 @@
       "source_file": "README.md",
       "source_location": "L107",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_readme_sord_self_sticker_engine",
-      "target": "sord_selfsticker_readme_docker_deployment",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_readme_docker_deployment"
     },
     {
       "relation": "contains",
@@ -1702,9 +2705,9 @@
       "source_file": "README.md",
       "source_location": "L115",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_readme_sord_self_sticker_engine",
-      "target": "sord_selfsticker_readme_licen\u00e7a_license",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_readme_licen\u00e7a_license"
     },
     {
       "relation": "contains",
@@ -1712,9 +2715,19 @@
       "source_file": "README.md",
       "source_location": "L14",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_readme_portugu\u00eas",
-      "target": "sord_selfsticker_readme_vis\u00e3o_geral",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_readme_vis\u00e3o_geral"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L23",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sord_selfsticker_readme_portugu\u00eas",
+      "target": "sord_selfsticker_readme_comandos_dispon\u00edveis_no_chat_pr\u00f3prio"
     },
     {
       "relation": "contains",
@@ -1722,9 +2735,9 @@
       "source_file": "README.md",
       "source_location": "L20",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_readme_portugu\u00eas",
-      "target": "sord_selfsticker_readme_garantia_de_privacidade_zero_sight",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_readme_garantia_de_privacidade_zero_sight"
     },
     {
       "relation": "contains",
@@ -1732,9 +2745,19 @@
       "source_file": "README.md",
       "source_location": "L29",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_readme_english",
-      "target": "sord_selfsticker_readme_overview",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_readme_overview"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L50",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sord_selfsticker_readme_english",
+      "target": "sord_selfsticker_readme_self_chat_commands"
     },
     {
       "relation": "contains",
@@ -1742,9 +2765,9 @@
       "source_file": "README.md",
       "source_location": "L35",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_readme_english",
-      "target": "sord_selfsticker_readme_zero_sight_security_policy",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_readme_zero_sight_security_policy"
     },
     {
       "relation": "contains",
@@ -1752,9 +2775,9 @@
       "source_file": "README.md",
       "source_location": "L44",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_readme_instala\u00e7\u00e3o_e_execu\u00e7\u00e3o_setup_run",
-      "target": "sord_selfsticker_readme_requisitos_prerequisites",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_readme_requisitos_prerequisites"
     },
     {
       "relation": "contains",
@@ -1762,9 +2785,9 @@
       "source_file": "README.md",
       "source_location": "L48",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_readme_instala\u00e7\u00e3o_e_execu\u00e7\u00e3o_setup_run",
-      "target": "sord_selfsticker_readme_1_clonar_e_instalar_clone_install",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_readme_1_clonar_e_instalar_clone_install"
     },
     {
       "relation": "contains",
@@ -1772,9 +2795,9 @@
       "source_file": "README.md",
       "source_location": "L55",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_readme_instala\u00e7\u00e3o_e_execu\u00e7\u00e3o_setup_run",
-      "target": "sord_selfsticker_readme_2_configura\u00e7\u00e3o_configuration",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_readme_2_configura\u00e7\u00e3o_configuration"
     },
     {
       "relation": "contains",
@@ -1782,9 +2805,9 @@
       "source_file": "README.md",
       "source_location": "L61",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_readme_instala\u00e7\u00e3o_e_execu\u00e7\u00e3o_setup_run",
-      "target": "sord_selfsticker_readme_3_iniciar_o_servidor_start_the_server",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_readme_3_iniciar_o_servidor_start_the_server"
     },
     {
       "relation": "contains",
@@ -1792,9 +2815,9 @@
       "source_file": "README.md",
       "source_location": "L49",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_readme_1_clonar_e_instalar_clone_install",
-      "target": "sord_selfsticker_readme_codeblock_1",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_readme_codeblock_1"
     },
     {
       "relation": "contains",
@@ -1802,9 +2825,9 @@
       "source_file": "README.md",
       "source_location": "L57",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_readme_2_configura\u00e7\u00e3o_configuration",
-      "target": "sord_selfsticker_readme_codeblock_2",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_readme_codeblock_2"
     },
     {
       "relation": "contains",
@@ -1812,9 +2835,9 @@
       "source_file": "README.md",
       "source_location": "L62",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_readme_3_iniciar_o_servidor_start_the_server",
-      "target": "sord_selfsticker_readme_codeblock_3",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_readme_codeblock_3"
     },
     {
       "relation": "contains",
@@ -1822,9 +2845,9 @@
       "source_file": "README.md",
       "source_location": "L71",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_readme_api_endpoints",
-      "target": "sord_selfsticker_readme_post_api_sejabot_pair",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_readme_post_api_sejabot_pair"
     },
     {
       "relation": "contains",
@@ -1832,9 +2855,9 @@
       "source_file": "README.md",
       "source_location": "L87",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_readme_api_endpoints",
-      "target": "sord_selfsticker_readme_get_api_sejabot_status_sessionid_5511999998888",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_readme_get_api_sejabot_status_sessionid_5511999998888"
     },
     {
       "relation": "contains",
@@ -1842,8 +2865,18 @@
       "source_file": "README.md",
       "source_location": "L98",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_readme_api_endpoints",
-      "target": "sord_selfsticker_readme_post_api_sejabot_disconnect",
+      "target": "sord_selfsticker_readme_post_api_sejabot_disconnect"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L131",
+      "weight": 1.0,
+      "source": "sord_selfsticker_readme_api_endpoints",
+      "target": "sord_selfsticker_readme_post_api_sejabot_enviar",
       "confidence_score": 1.0
     },
     {
@@ -1852,9 +2885,9 @@
       "source_file": "README.md",
       "source_location": "L74",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_readme_post_api_sejabot_pair",
-      "target": "sord_selfsticker_readme_codeblock_4",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_readme_codeblock_4"
     },
     {
       "relation": "contains",
@@ -1862,9 +2895,9 @@
       "source_file": "README.md",
       "source_location": "L78",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_readme_post_api_sejabot_pair",
-      "target": "sord_selfsticker_readme_codeblock_5",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_readme_codeblock_5"
     },
     {
       "relation": "contains",
@@ -1872,9 +2905,9 @@
       "source_file": "README.md",
       "source_location": "L90",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_readme_get_api_sejabot_status_sessionid_5511999998888",
-      "target": "sord_selfsticker_readme_codeblock_6",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_readme_codeblock_6"
     },
     {
       "relation": "contains",
@@ -1882,8 +2915,28 @@
       "source_file": "README.md",
       "source_location": "L101",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_readme_post_api_sejabot_disconnect",
-      "target": "sord_selfsticker_readme_codeblock_7",
+      "target": "sord_selfsticker_readme_codeblock_7"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L134",
+      "weight": 1.0,
+      "source": "sord_selfsticker_readme_post_api_sejabot_enviar",
+      "target": "sord_selfsticker_readme_codeblock_8",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L138",
+      "weight": 1.0,
+      "source": "sord_selfsticker_readme_post_api_sejabot_enviar",
+      "target": "sord_selfsticker_readme_codeblock_9",
       "confidence_score": 1.0
     },
     {
@@ -1892,8 +2945,18 @@
       "source_file": "README.md",
       "source_location": "L109",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_readme_docker_deployment",
-      "target": "sord_selfsticker_readme_codeblock_8",
+      "target": "sord_selfsticker_readme_codeblock_8"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L152",
+      "weight": 1.0,
+      "source": "sord_selfsticker_readme_docker_deployment",
+      "target": "sord_selfsticker_readme_codeblock_10",
       "confidence_score": 1.0
     },
     {
@@ -1902,9 +2965,9 @@
       "source_file": "SECURITY.md",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "security_md",
-      "target": "sord_selfsticker_security_security_policy_architecture_model",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_security_security_policy_architecture_model"
     },
     {
       "relation": "contains",
@@ -1912,9 +2975,9 @@
       "source_file": "SECURITY.md",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_security_security_policy_architecture_model",
-      "target": "sord_selfsticker_security_1_zero_sight_guarantee_privacidade_cega",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_security_1_zero_sight_guarantee_privacidade_cega"
     },
     {
       "relation": "contains",
@@ -1922,9 +2985,9 @@
       "source_file": "SECURITY.md",
       "source_location": "L23",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_security_security_policy_architecture_model",
-      "target": "sord_selfsticker_security_2_trust_boundaries_threat_model",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_security_2_trust_boundaries_threat_model"
     },
     {
       "relation": "contains",
@@ -1932,9 +2995,9 @@
       "source_file": "SECURITY.md",
       "source_location": "L33",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_security_security_policy_architecture_model",
-      "target": "sord_selfsticker_security_3_sandboxing_operational_hardening",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_security_3_sandboxing_operational_hardening"
     },
     {
       "relation": "contains",
@@ -1942,9 +3005,9 @@
       "source_file": "SECURITY.md",
       "source_location": "L43",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_security_security_policy_architecture_model",
-      "target": "sord_selfsticker_security_4_reporting_security_vulnerabilities",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_security_4_reporting_security_vulnerabilities"
     },
     {
       "relation": "contains",
@@ -1952,9 +3015,9 @@
       "source_file": "SECURITY.md",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_security_1_zero_sight_guarantee_privacidade_cega",
-      "target": "sord_selfsticker_security_codeblock_1",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_security_codeblock_1"
     },
     {
       "relation": "contains",
@@ -1962,11 +3025,11 @@
       "source_file": "SECURITY.md",
       "source_location": "L16",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sord_selfsticker_security_1_zero_sight_guarantee_privacidade_cega",
-      "target": "sord_selfsticker_security_invariants",
-      "confidence_score": 1.0
+      "target": "sord_selfsticker_security_invariants"
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "91551d2d6ff79705883606bcce2bd4777561a9f5"
+  "built_at_commit": "2a6ba51de52b7f6c8c27836184b581d83835c236"
 }

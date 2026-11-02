@@ -122,11 +122,31 @@ app.post("/api/sejabot/disconnect", async (req, res) => {
   }
 });
 
+/**
+ * POST /api/sejabot/enviar
+ * POST /api/sejabot/broadcast
+ * Transmite anuncio para todas as sessoes cadastradas
+ */
+app.post(["/api/sejabot/enviar", "/api/sejabot/broadcast"], async (req, res) => {
+  try {
+    const { message, announcement } = req.body;
+    const text = (announcement || message || "").trim();
+    if (!text) {
+      return res.status(400).json({ success: false, message: "Campo message ou announcement obrigatorio." });
+    }
+
+    const result = await sessionManager.broadcast(text);
+    return res.json({ success: true, ...result });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: err.message });
+  }
+});
+
 // Boot server
 async function main() {
   await sessionManager.init();
   app.listen(config.port, config.host, () => {
-    console.log(`🚀 Sord Self-Sticker running on http://${config.host}:${config.port}`);
+    console.log(`[Sord Self-Sticker] Servidor rodando em http://${config.host}:${config.port}`);
   });
 }
 

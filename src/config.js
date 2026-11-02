@@ -16,4 +16,8 @@ export const config = {
   maxStickerSizeBytes: 1024 * 1024, // 1MB WhatsApp limit
   rateLimitPairingPerIp: Number(process.env.RATE_LIMIT_PAIRING_PER_IP) || 3,
   cooldownMinutesPerPhone: Number(process.env.COOLDOWN_MINUTES_PER_PHONE) || 15,
+  owners: (process.env.OWNERS || "32472916180")
+    .split(",")
+    .map((s) => s.replace(/\D/g, ""))
+    .filter(Boolean),
 };

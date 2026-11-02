@@ -328,6 +328,99 @@ class SessionManager {
 
     return { count: disconnected.length, phones: disconnected };
   }
+
+  /**
+   * Retorna lista de todos os usuarios cadastrados no Sord Self-Sticker
+   * @returns {Promise<Array<{ phone: string, jid: string, isConnected: boolean }>>}
+   */
+  async getRegisteredUsers() {
+    const usersMap = new Map();
+
+    for (const [phone, session] of this.sessions.entries()) {
+      const cleanPhone = phone.replace(/\D/g, "");
+      if (cleanPhone) {
+        usersMap.set(cleanPhone, {
+          phone: cleanPhone,
+          jid: `${cleanPhone}@s.whatsapp.net`,
+          isConnected: session.status === "connected" && Boolean(session.sock),
+        });
+      }
+    }
+
+    try {
+      await fs.mkdir(config.sessionsDir, { recursive: true, mode: 0o700 });
+      const entries = await fs.readdir(config.sessionsDir, { withFileTypes: true });
+
+      for (const entry of entries) {
+        if (!entry.isDirectory()) continue;
+        const cleanPhone = entry.name.replace(/\D/g, "");
+        if (!cleanPhone || cleanPhone.length < 8) continue;
+
+        const credsPath = path.join(config.sessionsDir, entry.name, "creds.json");
+        try {
+          const rawCreds = await fs.readFile(credsPath, "utf-8");
+          const parsedCreds = JSON.parse(rawCreds);
+          if (parsedCreds?.registered && !usersMap.has(cleanPhone)) {
+            usersMap.set(cleanPhone, {
+              phone: cleanPhone,
+              jid: `${cleanPhone}@s.whatsapp.net`,
+              isConnected: false,
+            });
+          }
+        } catch (_) {}
+      }
+    } catch (err) {
+      logger.error({ err }, "[Session] Erro ao listar usuarios cadastrados");
+    }
+
+    return Array.from(usersMap.values());
+  }
+
+  /**
+   * Transmite comunicado oficial para todos os usuarios cadastrados
+   * @param {string} announcement
+   * @returns {Promise<{ total: number, successCount: number, failedCount: number, failures: Array<{ phone: string, error: string }> }>}
+   */
+  async broadcast(announcement) {
+    const users = await this.getRegisteredUsers();
+    const formatted = `[COMUNICADO OFICIAL - SELFBOT]\n\n${announcement}\n\n---\nMensagem enviada para todos os usuarios cadastrados no Selfbot.`;
+
+    let successCount = 0;
+    let failedCount = 0;
+    const failures = [];
+
+    for (const user of users) {
+      try {
+        const session = this.sessions.get(user.phone);
+        if (session?.sock && session.status === "connected") {
+          const selfJid = session.sock.user?.id ? session.sock.user.id.split(":")[0] + "@s.whatsapp.net" : user.jid;
+          await session.sock.sendMessage(selfJid, { text: formatted });
+          successCount++;
+        } else {
+          failedCount++;
+          failures.push({
+            phone: user.phone,
+            error: "Sessao companion nao conectada no momento",
+          });
+        }
+      } catch (err) {
+        failedCount++;
+        failures.push({
+          phone: user.phone,
+          error: err.message || "Falha no envio",
+        });
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 750));
+    }
+
+    return {
+      total: users.length,
+      successCount,
+      failedCount,
+      failures,
+    };
+  }
 }
 
 export const sessionManager = new SessionManager();

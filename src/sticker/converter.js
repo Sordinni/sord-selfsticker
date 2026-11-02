@@ -12,7 +12,7 @@ import { config } from "../config.js";
 const execFilePromise = promisify(execFile);
 
 /**
- * Creates WhatsApp EXIF buffer with pack and author information.
+ * Cria o buffer EXIF do WhatsApp contendo informacoes de pack e autor.
  * @param {string} pack
  * @param {string} author
  * @returns {Promise<Buffer>}
@@ -34,7 +34,7 @@ export async function createExifBuffer(pack, author) {
 }
 
 /**
- * Attaches EXIF metadata to an existing WebP buffer.
+ * Anexa metadados EXIF a um buffer WebP existente.
  * @param {Buffer} webpBuffer
  * @param {Buffer} exifBuffer
  * @returns {Promise<Buffer>}
@@ -47,10 +47,24 @@ export async function addExifToWebp(webpBuffer, exifBuffer) {
 }
 
 /**
- * Converts image buffer into static WebP sticker.
+ * Reaplica metadados EXIF em uma figurinha existente.
+ * @param {Buffer} stickerBuffer
+ * @param {string} pack
+ * @param {string} author
+ * @returns {Promise<Buffer>}
+ */
+export async function setStickerMetadata(stickerBuffer, pack, author) {
+  const exifBuffer = await createExifBuffer(pack, author);
+  return await addExifToWebp(stickerBuffer, exifBuffer);
+}
+
+/**
+ * Converte um buffer de imagem em figurinha estatica WebP.
+ * Suporta modo esticado (esticada = true) exatamente como no Sordinho.
  * @param {Buffer} buffer
  * @param {string} pack
  * @param {string} author
+ * @param {boolean} isStretched
  * @param {number} targetSize
  * @returns {Promise<Buffer>}
  */
@@ -58,15 +72,24 @@ export async function createStickerImage(
   buffer,
   pack = config.stickerPackName,
   author = config.stickerPackAuthor,
+  isStretched = true,
   targetSize = 512
 ) {
+  const resizeOptions = isStretched
+    ? {
+        width: targetSize,
+        height: targetSize,
+        fit: "fill",
+      }
+    : {
+        width: targetSize,
+        height: targetSize,
+        fit: "contain",
+        background: { r: 0, g: 0, b: 0, alpha: 0 },
+      };
+
   const webpBuffer = await sharp(buffer)
-    .resize({
-      width: targetSize,
-      height: targetSize,
-      fit: "contain",
-      background: { r: 0, g: 0, b: 0, alpha: 0 },
-    })
+    .resize(resizeOptions)
     .webp({ quality: 90 })
     .toBuffer();
 
@@ -75,11 +98,13 @@ export async function createStickerImage(
 }
 
 /**
- * Converts video/GIF buffer into animated WebP sticker using multi-pass FFmpeg.
- * Hardened per security-audit: uses execFile with explicit array args and protocol whitelist.
+ * Converte video ou GIF em figurinha animada WebP via cascata multi-pass do FFmpeg.
+ * Garante compatibilidade estrita com o limite de 1MB do WhatsApp.
+ * Suporta modo esticado (esticada = true) redimensionando sem barras pretas.
  * @param {Buffer} mediaBuffer
  * @param {string} pack
  * @param {string} author
+ * @param {boolean} isStretched
  * @param {number} targetSize
  * @returns {Promise<Buffer>}
  */
@@ -87,19 +112,24 @@ export async function createStickerVideo(
   mediaBuffer,
   pack = config.stickerPackName,
   author = config.stickerPackAuthor,
-  targetSize = 512
+  isStretched = true,
+  targetSize = 210
 ) {
   const tempId = crypto.randomBytes(8).toString("hex");
   const tmpDir = os.tmpdir();
   const inputPath = path.join(tmpDir, `sord_${tempId}_in.mp4`);
   const outputPath = path.join(tmpDir, `sord_${tempId}_out.webp`);
 
+  const durationSec = 11;
+
+  // Cascata de resolucoes e taxas de quadros identica ao Sordinho para < 1MB
   const configs = [
-    { fps: 30, size: targetSize, duration: config.maxVideoDurationSeconds, q: 40 },
-    { fps: 24, size: targetSize, duration: config.maxVideoDurationSeconds, q: 35 },
-    { fps: 18, size: Math.min(targetSize, 384), duration: config.maxVideoDurationSeconds, q: 30 },
-    { fps: 15, size: Math.min(targetSize, 256), duration: config.maxVideoDurationSeconds, q: 25 },
-    { fps: 10, size: Math.min(targetSize, 256), duration: config.maxVideoDurationSeconds, q: 20 },
+    { fps: 30, size: targetSize, duration: durationSec, q: 40 },
+    { fps: 28, size: targetSize, duration: durationSec, q: 40 },
+    { fps: 20, size: targetSize, duration: durationSec, q: 35 },
+    { fps: 15, size: targetSize, duration: durationSec, q: 30 },
+    { fps: 15, size: Math.min(targetSize, 256), duration: durationSec, q: 25 },
+    { fps: 10, size: Math.min(targetSize, 256), duration: durationSec, q: 20 },
     { fps: 10, size: Math.min(targetSize, 192), duration: 8, q: 15 },
   ];
 
@@ -110,14 +140,21 @@ export async function createStickerVideo(
     let lastTriedBuffer = null;
 
     for (const conf of configs) {
+      // Quando esticada = true, forca dimensao quadrada sem cortar bordas
+      // Quando esticada = false, preserva proporcao com crop centralizado
+      const vfFilter = isStretched
+        ? `fps=${conf.fps},scale=${conf.size}:${conf.size}`
+        : `fps=${conf.fps},scale=${conf.size}:${conf.size}:force_original_aspect_ratio=increase,crop=${conf.size}:${conf.size}`;
+
       const ffmpegArgs = [
         "-y",
         "-protocol_whitelist", "file",
         "-loglevel", "error",
+        "-threads", "0",
         "-t", String(conf.duration),
         "-i", inputPath,
         "-vcodec", "libwebp",
-        "-vf", `fps=${conf.fps},scale=${conf.size}:${conf.size}:force_original_aspect_ratio=increase,crop=${conf.size}:${conf.size}`,
+        "-vf", vfFilter,
         "-lossless", "0",
         "-q:v", String(conf.q),
         "-preset", "default",
@@ -128,7 +165,7 @@ export async function createStickerVideo(
       ];
 
       try {
-        await execFilePromise("ffmpeg", ffmpegArgs, { timeout: 25000 });
+        await execFilePromise("ffmpeg", ffmpegArgs, { timeout: 30000 });
         const currentBuffer = await fs.readFile(outputPath);
         lastTriedBuffer = currentBuffer;
 
@@ -137,7 +174,7 @@ export async function createStickerVideo(
           break;
         }
       } catch (err) {
-        // Continue fallback passes
+        // Falha nesta configuracao, tenta o proximo passo da cascata
       }
     }
 
@@ -146,7 +183,7 @@ export async function createStickerVideo(
     }
 
     if (!webpBuffer) {
-      throw new Error("Não foi possível gerar a figurinha animada com o tamanho adequado.");
+      throw new Error("Nao foi possivel gerar a figurinha animada com o tamanho adequado.");
     }
 
     const exifBuffer = await createExifBuffer(pack, author);
