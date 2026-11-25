@@ -284,7 +284,7 @@ export function attachZeroSightHandler(sock, cleanPhone, logger = console) {
             `*.renomear Meus Stickers | Juan*\n\n` +
             `*Configuracao atual:*\n` +
             `Pack: *${userPrefs.pack}*\n` +
-            `Autor: *${userPrefs.author}*`;
+            `Autor: ${userPrefs.author ? `*${userPrefs.author}*` : "_(vazio)_"}`;
           await sendReply(sock, remoteJid, helpRename, m);
           continue;
         }
@@ -298,7 +298,7 @@ export function attachZeroSightHandler(sock, cleanPhone, logger = console) {
             `- Autosticker: ${userPrefs.autosticker ? "*Ativado*" : "*Desativado*"}\n` +
             `- Modo Esticado: ${userPrefs.esticada ? "*Ativado*" : "*Desativado*"}\n` +
             `- Pacote (Pack): *${userPrefs.pack}*\n` +
-            `- Autor: *${userPrefs.author}*`;
+            `- Autor: ${userPrefs.author ? `*${userPrefs.author}*` : "_(vazio)_"}`;
           await sendReply(sock, remoteJid, statusInfo, m);
           continue;
         }

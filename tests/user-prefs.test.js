@@ -21,6 +21,8 @@ test("persiste, alterna e redefine preferências do usuário", async () => {
     const initial = await getUserPrefs(phone);
     assert.equal(initial.autosticker, true);
     assert.equal(initial.esticada, true);
+    assert.equal(initial.pack, "twitter - @sordbot");
+    assert.equal(initial.author, "");
 
     assert.equal(await toggleUserPref(phone, "esticada"), false);
     await setUserPrefs(phone, { autosticker: false, pack: "Meu Pack", author: "Eu" });

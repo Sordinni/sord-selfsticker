@@ -14,8 +14,8 @@ function getDefaultPrefs() {
   return {
     autosticker: true,
     esticada: true,
-    pack: config.stickerPackName || "Feito por Mim",
-    author: config.stickerPackAuthor || "SejaBot",
+    pack: config.stickerPackName || "twitter - @sordbot",
+    author: config.stickerPackAuthor ?? "",
   };
 }
 
@@ -25,10 +25,7 @@ function normalizePrefs(data) {
     autosticker: typeof data?.autosticker === "boolean" ? data.autosticker : defaults.autosticker,
     esticada: typeof data?.esticada === "boolean" ? data.esticada : defaults.esticada,
     pack: typeof data?.pack === "string" && data.pack.trim() ? data.pack.trim().slice(0, 30) : defaults.pack,
-    author:
-      typeof data?.author === "string" && data.author.trim()
-        ? data.author.trim().slice(0, 30)
-        : defaults.author,
+    author: typeof data?.author === "string" ? data.author.trim().slice(0, 30) : defaults.author,
   };
 }
 
@@ -148,7 +145,7 @@ export async function setUserPrefs(phone, updates) {
     ...(typeof updates?.autosticker === "boolean" ? { autosticker: updates.autosticker } : {}),
     ...(typeof updates?.esticada === "boolean" ? { esticada: updates.esticada } : {}),
     ...(typeof updates?.pack === "string" && updates.pack.trim() ? { pack: updates.pack.trim() } : {}),
-    ...(typeof updates?.author === "string" && updates.author.trim() ? { author: updates.author.trim() } : {}),
+    ...(typeof updates?.author === "string" ? { author: updates.author.trim() } : {}),
   }));
 }
 

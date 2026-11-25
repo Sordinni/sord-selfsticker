@@ -20,8 +20,8 @@ const execFilePromise = promisify(execFile);
 export async function createExifBuffer(pack, author) {
   const json = {
     "sticker-pack-id": crypto.randomBytes(32).toString("hex"),
-    "sticker-pack-name": pack || config.stickerPackName,
-    "sticker-pack-publisher": author || config.stickerPackAuthor,
+    "sticker-pack-name": pack ?? config.stickerPackName,
+    "sticker-pack-publisher": author ?? config.stickerPackAuthor,
   };
   const exifAttr = Buffer.from([
     0x49, 0x49, 0x2a, 0x00, 0x08, 0x00, 0x00, 0x00, 0x01, 0x00, 0x41, 0x57,

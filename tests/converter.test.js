@@ -11,6 +11,12 @@ test("cria figurinha estática WebP com EXIF e reaplica metadados", async () => 
     .png()
     .toBuffer();
 
+  const defaultSticker = await createStickerImage(png);
+  const defaultImg = new webp.Image();
+  await defaultImg.load(defaultSticker);
+  assert.ok(defaultImg.exif.includes(Buffer.from('"sticker-pack-name":"twitter - @sordbot"')));
+  assert.ok(defaultImg.exif.includes(Buffer.from('"sticker-pack-publisher":""')));
+
   const sticker = await createStickerImage(png, "Pack Teste", "Autor Teste", true, 512);
   const meta = await sharp(sticker).metadata();
   assert.equal(meta.format, "webp");

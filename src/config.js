@@ -13,8 +13,8 @@ export const config = {
     .filter(Boolean),
   sessionsDir: path.resolve(process.env.SESSIONS_DIR || path.join(__dirname, "../sessions")),
   tempDir: path.resolve(process.env.TEMP_DIR || path.join(os.tmpdir(), "sord-selfsticker")),
-  stickerPackName: process.env.STICKER_PACK_NAME || "Feito por Mim",
-  stickerPackAuthor: process.env.STICKER_PACK_AUTHOR || "SejaBot",
+  stickerPackName: process.env.STICKER_PACK_NAME || "twitter - @sordbot",
+  stickerPackAuthor: process.env.STICKER_PACK_AUTHOR ?? "",
   maxVideoDurationSeconds: Number(process.env.MAX_VIDEO_DURATION_SECONDS) || 10,
   maxMediaBytes: Number(process.env.MAX_MEDIA_BYTES) || 32 * 1024 * 1024,
   maxStickerSizeBytes: 1024 * 1024, // 1MB WhatsApp limit

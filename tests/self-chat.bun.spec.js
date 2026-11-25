@@ -32,7 +32,7 @@ test("comandos no próprio chat ignoram spoof/grupos/mensagens antigas e executa
   }));
   mock.module("../src/sticker/user-prefs.js", () => ({
     async getUserPrefs() {
-      return { autosticker: true, esticada: true, pack: "Feito por Mim", author: "SejaBot" };
+      return { autosticker: true, esticada: true, pack: "twitter - @sordbot", author: "" };
     },
     async setUserPrefs(id, value) {
       updates.push({ id, value });
@@ -91,7 +91,7 @@ test("comandos no próprio chat ignoram spoof/grupos/mensagens antigas e executa
     expect(updates).toEqual([{ id: phone, value: { autosticker: false } }]);
     expect(audioCalls).toHaveLength(1);
     expect(audioCalls[0].jid).toBe(`${phone}@s.whatsapp.net`);
-    expect(audioCalls[0].opts.pack).toBe("Feito por Mim");
+    expect(audioCalls[0].opts.pack).toBe("twitter - @sordbot");
   } finally {
     mock.restore();
   }
