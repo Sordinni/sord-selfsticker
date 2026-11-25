@@ -1,17 +1,20 @@
 import {
   useMultiFileAuthState,
   DisconnectReason,
+  jidNormalizedUser,
 } from "@whiskeysockets/baileys";
 import pino from "pino";
 import fs from "fs/promises";
 import path from "path";
+import { randomBytes } from "node:crypto";
 import { config } from "../config.js";
 import { createConnection, BaileysVersion } from "./connection.js";
 import { naruyaizumi } from "./socket.js";
-import { attachZeroSightHandler } from "./zero-sight.js";
+import { attachZeroSightHandler, mediaQueue, trackBotMessage } from "./zero-sight.js";
+import { forgetUserPrefs, flushUserPrefs } from "../sticker/user-prefs.js";
 
 const logger = pino({
-  level: "info",
+  level: process.env.LOG_LEVEL || "info",
   transport: {
     target: "pino-pretty",
     options: { colorize: true },
@@ -20,33 +23,62 @@ const logger = pino({
 
 const versionFetcher = new BaileysVersion();
 
-class SessionManager {
+export class SessionManager {
   constructor() {
-    /** @type {Map<string, { sock: any, status: 'pairing' | 'connected' | 'disconnected', code?: string, createdAt: number }>} */
+    /** @type {Map<string, { sock: any, status: string, code?: string|null, createdAt: number, reconnectAttempts: number, reconnectTimer: any, disconnecting?: boolean }>} */
     this.sessions = new Map();
+    this.shuttingDown = false;
+    this.restorePromise = Promise.resolve();
   }
 
   async init() {
     await fs.mkdir(config.sessionsDir, { recursive: true, mode: 0o700 });
 
-    // Restaura sessões ativas existentes na inicialização
+    const phones = [];
     try {
       const entries = await fs.readdir(config.sessionsDir, { withFileTypes: true });
       for (const entry of entries) {
-        if (entry.isDirectory()) {
-          const phone = entry.name;
-          const credsPath = path.join(config.sessionsDir, phone, "creds.json");
-          try {
-            await fs.access(credsPath);
-            logger.info(`[Session] Restoring saved companion session for: ${phone}`);
-            this.connectSocket(phone, false).catch((err) => {
-              logger.error({ err }, `[Session] Could not restore session for: ${phone}`);
-            });
-          } catch (_) {}
-        }
+        if (!entry.isDirectory() || !/^\d{7,16}$/.test(entry.name)) continue;
+        const phone = entry.name;
+        const credsPath = path.join(config.sessionsDir, phone, "creds.json");
+        try {
+          const raw = await fs.readFile(credsPath, "utf-8");
+          const parsed = JSON.parse(raw);
+          if (parsed?.registered) {
+            phones.push(phone);
+          }
+        } catch (_) {}
       }
     } catch (err) {
       logger.error({ err }, "[Session] Error scanning existing sessions");
+    }
+
+    this.restorePromise = this.restoreSessions(phones);
+    return this.restorePromise;
+  }
+
+  async restoreSessions(phones) {
+    for (const phone of phones) {
+      if (this.shuttingDown) break;
+      logger.info(`[Session] Restoring saved companion session for: ${phone}`);
+      try {
+        await this.connectSocket(phone, false);
+      } catch (err) {
+        if (this.shuttingDown) break;
+        logger.error({ err }, `[Session] Could not restore session for: ${phone}`);
+        const session = this.sessions.get(phone) || {
+          sock: null,
+          status: "disconnected",
+          code: null,
+          createdAt: Date.now(),
+          reconnectAttempts: 0,
+          reconnectTimer: null,
+        };
+        this.sessions.set(phone, session);
+        this.scheduleReconnect(phone, session);
+      }
+      // Stagger restored connections to avoid simultaneous bursts
+      await new Promise((resolve) => setTimeout(resolve, 200 + Math.floor(Math.random() * 200)));
     }
   }
 
@@ -54,13 +86,75 @@ class SessionManager {
     return path.join(config.sessionsDir, cleanPhone);
   }
 
+  scheduleReconnect(phone, session, isRestartRequired = false) {
+    if (
+      this.shuttingDown ||
+      session.disconnecting ||
+      this.sessions.get(phone) !== session ||
+      session.reconnectTimer
+    ) {
+      return;
+    }
+
+    session.status = "reconnecting";
+    session.reconnectAttempts = (session.reconnectAttempts || 0) + 1;
+
+    const cap = Math.min(60000, 1000 * 2 ** Math.min(session.reconnectAttempts, 6));
+    const delay = isRestartRequired
+      ? 500
+      : Math.floor(cap / 2 + (Math.random() * cap) / 2);
+
+    logger.info(
+      `[Session] Scheduling auto-reconnect for ${phone} in ${delay}ms (attempt ${session.reconnectAttempts})...`
+    );
+
+    session.reconnectTimer = setTimeout(async () => {
+      session.reconnectTimer = null;
+      if (this.shuttingDown || session.disconnecting || this.sessions.get(phone) !== session) {
+        return;
+      }
+      try {
+        await this.connectSocket(phone, false);
+      } catch (err) {
+        logger.error({ err }, `[Session] Failed to auto-reconnect ${phone}`);
+        this.scheduleReconnect(phone, session, false);
+      }
+    }, delay);
+  }
+
   /**
-   * Conecta ou reconecta o socket do companion usando a engine do Sordinho
+   * Conecta ou reconecta o socket do companion.
    * @param {string} cleanPhone
    * @param {boolean} isInitialPairing
    */
   async connectSocket(cleanPhone, isInitialPairing = false) {
+    if (this.shuttingDown) throw new Error("Serviço encerrando");
     const sessionDir = this.getSessionPath(cleanPhone);
+
+    let sessionData = this.sessions.get(cleanPhone);
+    if (!sessionData) {
+      sessionData = {
+        sock: null,
+        status: isInitialPairing ? "pairing" : "connecting",
+        code: null,
+        createdAt: Date.now(),
+        reconnectAttempts: 0,
+        reconnectTimer: null,
+        disconnecting: false,
+      };
+      this.sessions.set(cleanPhone, sessionData);
+    } else {
+      if (sessionData.reconnectTimer) {
+        clearTimeout(sessionData.reconnectTimer);
+        sessionData.reconnectTimer = null;
+      }
+      sessionData.disconnecting = false;
+      if (isInitialPairing) {
+        sessionData.status = "pairing";
+        sessionData.createdAt = Date.now();
+        sessionData.reconnectAttempts = 0;
+      }
+    }
 
     if (isInitialPairing) {
       await fs.rm(sessionDir, { recursive: true, force: true }).catch(() => {});
@@ -68,16 +162,17 @@ class SessionManager {
     }
 
     const waVersion = await versionFetcher.fetchVersion();
-
     const { state, saveCreds } = await useMultiFileAuthState(sessionDir);
-    const auth = { state, saveCreds };
+    if (this.shuttingDown || sessionData.disconnecting || this.sessions.get(cleanPhone) !== sessionData) {
+      throw new Error("Serviço ou sessão encerrando");
+    }
 
+    const auth = { state, saveCreds };
     const silentLogger = pino({
       level: "silent",
       base: { module: "SORD-SELFSTICKER" },
     });
 
-    // Se for reconexão, não passamos cleanPhone como pairingNumber para não forçar usePairingCode
     const connectionConfig = createConnection(
       waVersion,
       auth,
@@ -86,37 +181,32 @@ class SessionManager {
     );
 
     const sock = naruyaizumi(connectionConfig);
+    sessionData.sock = sock;
 
-    sock.ev.on("creds.update", saveCreds);
+    sock.ev.on("creds.update", () =>
+      Promise.resolve(saveCreds()).catch((err) => {
+        logger.error({ err }, `[Session] Failed persisting credentials for ${cleanPhone}`);
+      })
+    );
 
-    let sessionData = this.sessions.get(cleanPhone);
-    if (!sessionData) {
-      sessionData = {
-        sock,
-        status: isInitialPairing ? "pairing" : "connecting",
-        code: null,
-        createdAt: Date.now(),
-        reconnectAttempts: 0,
-        reconnectTimer: null,
-      };
-      this.sessions.set(cleanPhone, sessionData);
-    } else {
-      if (sessionData.reconnectTimer) {
-        clearTimeout(sessionData.reconnectTimer);
-        sessionData.reconnectTimer = null;
-      }
-      sessionData.sock = sock;
-      if (isInitialPairing) {
-        sessionData.status = "pairing";
-        sessionData.reconnectAttempts = 0;
-      }
-    }
-
-    // Handle connection state changes
     sock.ev.on("connection.update", async (update) => {
+      if (sessionData.sock !== sock || sessionData.disconnecting) return;
       const { connection, lastDisconnect } = update;
 
       if (connection === "open") {
+        if (!sock.user?.id || jidNormalizedUser(sock.user.id) !== `${cleanPhone}@s.whatsapp.net`) {
+          sessionData.status = "identity_mismatch";
+          sessionData.disconnecting = true;
+          try {
+            sock.ev.removeAllListeners();
+            sock.end?.();
+            sock.ws?.close?.();
+          } catch (_) {}
+          sessionData.sock = null;
+          logger.error(`[Session] Identity mismatch for ${cleanPhone}`);
+          return;
+        }
+
         logger.info(`[Session] WhatsApp companion connected successfully for: ${cleanPhone}`);
         sessionData.status = "connected";
         sessionData.reconnectAttempts = 0;
@@ -131,7 +221,9 @@ class SessionManager {
         const statusCode = lastDisconnect?.error?.output?.statusCode;
         const shouldReconnect = statusCode !== DisconnectReason.loggedOut;
 
-        logger.warn(`[Session] Connection closed for ${cleanPhone}. Reason: ${statusCode}, Reconnect: ${shouldReconnect}`);
+        logger.warn(
+          `[Session] Connection closed for ${cleanPhone}. Reason: ${statusCode}, Reconnect: ${shouldReconnect}`
+        );
 
         try {
           sock.ev.removeAllListeners();
@@ -144,30 +236,19 @@ class SessionManager {
         }
 
         if (!shouldReconnect) {
-          await this.disconnect(cleanPhone);
+          sessionData.sock = null;
+          sessionData.status = "logged_out";
+          await this.disconnect(cleanPhone).catch(() => {});
+        } else if (
+          state.creds.registered ||
+          statusCode === DisconnectReason.restartRequired ||
+          statusCode === 515
+        ) {
+          const isRestartRequired =
+            statusCode === DisconnectReason.restartRequired || statusCode === 515;
+          this.scheduleReconnect(cleanPhone, sessionData, isRestartRequired);
         } else {
-          sessionData.status = "reconnecting";
-          sessionData.reconnectAttempts = (sessionData.reconnectAttempts || 0) + 1;
-
-          // Status 515 (restartRequired) é disparado imediatamente após o usuário digitar o código no celular!
-          // O WhatsApp exige reiniciar a conexão para carregar as credenciais validadas.
-          const isRestartRequired = statusCode === DisconnectReason.restartRequired || statusCode === 515;
-          const delayMs = isRestartRequired ? 500 : Math.min(2500 * sessionData.reconnectAttempts, 15000);
-
-          if (sessionData.reconnectAttempts > 8 && !isRestartRequired) {
-            logger.warn(`[Session] Reconnection attempt limit reached for ${cleanPhone}`);
-            sessionData.status = "disconnected";
-            this.sessions.delete(cleanPhone);
-            return;
-          }
-
-          logger.info(`[Session] Scheduling auto-reconnect for ${cleanPhone} in ${delayMs}ms (attempt ${sessionData.reconnectAttempts}, status: ${statusCode})...`);
-          sessionData.reconnectTimer = setTimeout(() => {
-            sessionData.reconnectTimer = null;
-            this.connectSocket(cleanPhone, false).catch((err) => {
-              logger.error({ err }, `[Session] Failed to auto-reconnect ${cleanPhone}`);
-            });
-          }, delayMs);
+          sessionData.status = "disconnected";
         }
       }
     });
@@ -176,26 +257,41 @@ class SessionManager {
   }
 
   /**
-   * Starts a pairing session for the given phone number using Sordinho's exact initialization instance.
+   * Starts a pairing session for the given phone number.
    * @param {string} cleanPhone
    * @returns {Promise<{ code: string, sessionId: string, alreadyConnected?: boolean }>}
    */
   async startPairing(cleanPhone) {
-    // If there is already an active connected session, return status
     const existing = this.sessions.get(cleanPhone);
     if (existing && existing.status === "connected") {
       return { code: "CONNECTED", sessionId: cleanPhone, alreadyConnected: true };
     }
 
-    // Clean any prior pending socket
+    if (
+      existing &&
+      (existing.status === "pairing" || existing.status === "connecting" || existing.status === "reconnecting") &&
+      Date.now() - existing.createdAt < 120000
+    ) {
+      throw Object.assign(new Error("Sessão já existente ou pareamento em andamento."), {
+        code: "EEXIST",
+      });
+    }
+
+    if (existing?.reconnectTimer) {
+      clearTimeout(existing.reconnectTimer);
+      existing.reconnectTimer = null;
+    }
     if (existing?.sock) {
-      try { existing.sock.end(); } catch (_) {}
+      try {
+        existing.sock.ev?.removeAllListeners();
+        existing.sock.end?.();
+        existing.sock.ws?.close?.();
+      } catch (_) {}
       this.sessions.delete(cleanPhone);
     }
 
     const { sock, sessionData } = await this.connectSocket(cleanPhone, true);
 
-    // Wait until WebSocket is actually open (ws.isOpen or waitForSocketOpen)
     let isOpened = Boolean(sock.ws?.isOpen || sock.user);
     if (!isOpened) {
       for (let i = 0; i < 50; i++) {
@@ -211,7 +307,9 @@ class SessionManager {
       try {
         await Promise.race([
           sock.waitForSocketOpen(),
-          new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout conectando ao WhatsApp")), 10000)),
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error("Timeout conectando ao WhatsApp")), 10000)
+          ),
         ]);
       } catch (_) {}
     }
@@ -225,9 +323,12 @@ class SessionManager {
           if (rawCode) break;
         } catch (err) {
           lastErr = err;
-          const isConnClosed = err?.output?.statusCode === 428 || err?.message?.includes("Connection Closed");
+          const isConnClosed =
+            err?.output?.statusCode === 428 || err?.message?.includes("Connection Closed");
           if (isConnClosed && attempt < 3) {
-            logger.warn(`[Session] Socket closed during pairing code request (attempt ${attempt}/3). Retrying...`);
+            logger.warn(
+              `[Session] Socket closed during pairing code request (attempt ${attempt}/3). Retrying...`
+            );
             await new Promise((r) => setTimeout(r, 1500));
           } else {
             throw err;
@@ -235,8 +336,8 @@ class SessionManager {
         }
       }
 
-      if (!rawCode && lastErr) {
-        throw lastErr;
+      if (!rawCode) {
+        throw lastErr || new Error("Código de pareamento indisponível");
       }
 
       const formattedCode = rawCode?.match(/.{1,4}/g)?.join("-") || rawCode;
@@ -245,7 +346,17 @@ class SessionManager {
       sessionData.status = "pairing";
       return { code: formattedCode, sessionId: cleanPhone };
     } catch (err) {
-      this.sessions.delete(cleanPhone);
+      sessionData.disconnecting = true;
+      if (sessionData.reconnectTimer) {
+        clearTimeout(sessionData.reconnectTimer);
+        sessionData.reconnectTimer = null;
+      }
+      try { sock.ev?.removeAllListeners(); } catch (_) {}
+      try { sock.end?.(); } catch (_) {}
+      try { sock.ws?.close?.(); } catch (_) {}
+      if (this.sessions.get(cleanPhone) === sessionData) {
+        this.sessions.delete(cleanPhone);
+      }
       throw new Error(`Falha ao solicitar código de emparelhamento: ${err.message}`);
     }
   }
@@ -267,6 +378,31 @@ class SessionManager {
   }
 
   /**
+   * Gracefully shuts down active sockets without deleting saved session files.
+   */
+  async shutdown() {
+    this.shuttingDown = true;
+    for (const session of this.sessions.values()) {
+      session.disconnecting = true;
+      if (session.reconnectTimer) {
+        clearTimeout(session.reconnectTimer);
+        session.reconnectTimer = null;
+      }
+      session.sock?.ev?.removeAllListeners("messages.upsert");
+    }
+
+    await Promise.all([mediaQueue.close(), this.restorePromise]);
+
+    for (const [phone, session] of this.sessions.entries()) {
+      await flushUserPrefs(phone).catch(() => {});
+      try { session.sock?.ev?.removeAllListeners(); } catch (_) {}
+      try { session.sock?.end?.(); } catch (_) {}
+      try { session.sock?.ws?.close?.(); } catch (_) {}
+    }
+    this.sessions.clear();
+  }
+
+  /**
    * Closes socket and wipes all session files securely from disk.
    * @param {string} cleanPhone
    */
@@ -276,16 +412,26 @@ class SessionManager {
       clearTimeout(session.reconnectTimer);
       session.reconnectTimer = null;
     }
+    if (session) session.disconnecting = true;
+    if (session?.sock) session.sock._selfstickerStopping = true;
+
+    await mediaQueue.stopKey(cleanPhone);
+    await flushUserPrefs(cleanPhone);
+
     if (session?.sock) {
       try {
-        await session.sock.logout();
+        if (session.status === "connected") {
+          await session.sock.logout();
+        }
       } catch (_) {}
-      try {
-        session.sock.end();
-      } catch (_) {}
+      try { session.sock.ev?.removeAllListeners(); } catch (_) {}
+      try { session.sock.end?.(); } catch (_) {}
+      try { session.sock.ws?.close?.(); } catch (_) {}
     }
 
     this.sessions.delete(cleanPhone);
+    forgetUserPrefs(cleanPhone);
+    mediaQueue.releaseKey(cleanPhone);
 
     const sessionDir = this.getSessionPath(cleanPhone);
     try {
@@ -303,16 +449,21 @@ class SessionManager {
     const disconnected = [];
     for (const [phone, session] of this.sessions.entries()) {
       try {
+        session.disconnecting = true;
         if (session.reconnectTimer) {
           clearTimeout(session.reconnectTimer);
           session.reconnectTimer = null;
         }
+        await mediaQueue.stopKey(phone);
+        await flushUserPrefs(phone);
         if (session.sock) {
           try { session.sock.ev?.removeAllListeners(); } catch (_) {}
           try { await session.sock.logout?.(); } catch (_) {}
           try { session.sock.end?.(); } catch (_) {}
           try { session.sock.ws?.close?.(); } catch (_) {}
         }
+        forgetUserPrefs(phone);
+        mediaQueue.releaseKey(phone);
         disconnected.push(phone);
       } catch (_) {}
     }
@@ -393,8 +544,12 @@ class SessionManager {
       try {
         const session = this.sessions.get(user.phone);
         if (session?.sock && session.status === "connected") {
-          const selfJid = session.sock.user?.id ? session.sock.user.id.split(":")[0] + "@s.whatsapp.net" : user.jid;
-          await session.sock.sendMessage(selfJid, { text: formatted });
+          const selfJid = session.sock.user?.id
+            ? session.sock.user.id.split(":")[0] + "@s.whatsapp.net"
+            : user.jid;
+          const messageId = randomBytes(16).toString("hex").toUpperCase();
+          trackBotMessage({ key: { id: messageId } });
+          await session.sock.sendMessage(selfJid, { text: formatted }, { messageId });
           successCount++;
         } else {
           failedCount++;

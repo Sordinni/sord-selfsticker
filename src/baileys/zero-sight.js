@@ -1,44 +1,50 @@
 import {
   jidNormalizedUser,
-  areJidsSameUser,
   extractMessageContent,
   downloadMediaMessage,
 } from "@whiskeysockets/baileys";
 import pino from "pino";
+import os from "node:os";
+import { config } from "../config.js";
+import { sessionManager } from "./session-manager.js";
+import { WorkQueue, QueueFullError } from "../security/work-queue.js";
+import { MediaLimitError, readLimitedStream } from "../security/limited-stream.js";
+import { isLiveMessage } from "../security/live-message.js";
 import {
   createStickerImage,
   createStickerVideo,
   setStickerMetadata,
 } from "../sticker/converter.js";
+import { sendAudioSticker } from "../sticker/audio-sticker.js";
 import {
   getUserPrefs,
   setUserPrefs,
   toggleUserPref,
   resetUserPrefs,
 } from "../sticker/user-prefs.js";
-import { config } from "../config.js";
-import { sessionManager } from "./session-manager.js";
 
 const silentLogger = pino({ level: "silent" });
+export const mediaQueue = new WorkQueue({
+  concurrency: Math.max(1, Math.min(2, os.availableParallelism() - 1)),
+  maxPending: 32,
+  maxPerKey: 2,
+});
 const botSentMsgIds = new Set();
 
 /**
  * Registra o ID de mensagens enviadas pelo bot para evitar loops de eco no self-chat.
  * @param {any} sentMsg
  */
-function trackBotMessage(sentMsg) {
+export function trackBotMessage(sentMsg) {
   if (sentMsg?.key?.id) {
     botSentMsgIds.add(sentMsg.key.id);
-    setTimeout(() => botSentMsgIds.delete(sentMsg.key.id), 60000);
+    const timer = setTimeout(() => botSentMsgIds.delete(sentMsg.key.id), 60000);
+    timer.unref?.();
   }
 }
 
 /**
  * Envia mensagem de texto com rastreamento anti-eco.
- * @param {any} sock
- * @param {string} jid
- * @param {string} text
- * @param {any} quoted
  */
 async function sendReply(sock, jid, text, quoted) {
   try {
@@ -52,10 +58,6 @@ async function sendReply(sock, jid, text, quoted) {
 
 /**
  * Envia figurinha com rastreamento anti-eco.
- * @param {any} sock
- * @param {string} jid
- * @param {Buffer} sticker
- * @param {any} quoted
  */
 async function sendSticker(sock, jid, sticker, quoted) {
   try {
@@ -69,8 +71,6 @@ async function sendSticker(sock, jid, sticker, quoted) {
 
 /**
  * Extrai texto limpo de uma mensagem.
- * @param {any} content
- * @returns {string}
  */
 function extractText(content) {
   if (!content) return "";
@@ -85,33 +85,36 @@ function extractText(content) {
 }
 
 /**
- * Baixa buffer de midia atraves do helper nativo ou fallback oficial do Baileys.
- * @param {any} sock
- * @param {any} m
- * @param {any} mediaNode
- * @param {'image' | 'video' | 'sticker'} mediaType
- * @returns {Promise<Buffer|null>}
+ * Baixa buffer de midia atraves do helper nativo com limite de tamanho e timeout.
  */
 async function downloadMedia(sock, m, mediaNode, mediaType) {
   if (sock.downloadM) {
     try {
       const buffer = await sock.downloadM(mediaNode, mediaType);
       if (buffer && buffer.length > 0) return buffer;
-    } catch (_) {}
+    } catch (error) {
+      if (error instanceof MediaLimitError) throw error;
+    }
   }
 
   try {
-    const buffer = await downloadMediaMessage(
+    const stream = await downloadMediaMessage(
       m,
-      "buffer",
+      "stream",
       {},
       {
         logger: silentLogger,
         reuploadRequest: sock.updateMediaMessage,
       }
     );
-    if (buffer && buffer.length > 0) return buffer;
-  } catch (_) {}
+    const buffer = await readLimitedStream(stream, {
+      maxBytes: config.maxMediaBytes,
+      timeoutMs: 45000,
+    });
+    if (buffer.length > 0) return buffer;
+  } catch (error) {
+    if (error instanceof MediaLimitError) throw error;
+  }
 
   return null;
 }
@@ -120,18 +123,19 @@ async function downloadMedia(sock, m, mediaNode, mediaType) {
  * Conecta o ouvinte de eventos Zero-Sight ao socket Baileys.
  * INVARIANTES DE PRIVACIDADE E SEGURANCA:
  * - 100% das mensagens fora do self-chat do usuario sao descartadas na RAM.
- * - Suporta comandos do Sordinho (.alternar, .autosticker, .renomear, .s, .fig).
- * - Suporta criacao de figurinhas estaticas, esticadas e animadas (< 1MB).
+ * - Ignora mensagens historicas/antigas sincronizadas ao reconectar.
+ * - Suporta comandos de figurinhas (.s, .fig, .ssom, .alternar, .autosticker, .renomear, .status, .ajuda).
  *
  * @param {import('@whiskeysockets/baileys').WASocket} sock
  * @param {string} cleanPhone
  * @param {object} logger
  */
 export function attachZeroSightHandler(sock, cleanPhone, logger = console) {
-  sock.ev.on("messages.upsert", async ({ messages, type }) => {
+  sock.ev.on("messages.upsert", async ({ messages }) => {
     for (const m of messages) {
+      let isAudioStickerCommand = false;
       try {
-        if (!m?.message) continue;
+        if (sock._selfstickerStopping || !m?.message || !isLiveMessage(m)) continue;
 
         // 1. Evita loops de eco causados por mensagens do proprio bot
         if (m.key?.id && botSentMsgIds.has(m.key.id)) {
@@ -144,19 +148,20 @@ export function attachZeroSightHandler(sock, cleanPhone, logger = console) {
         const myLid = sock.user?.lid ? jidNormalizedUser(sock.user.lid) : null;
 
         const remoteJid = m.key?.remoteJid || "";
-        const normalizedRemote = jidNormalizedUser(remoteJid);
+        if (!remoteJid.endsWith("@s.whatsapp.net") && !remoteJid.endsWith("@lid")) continue;
 
         // ZERO-SIGHT: descarta grupos e listas de transmissao imediatamente
         if (remoteJid.endsWith("@g.us") || remoteJid.endsWith("@broadcast")) {
           continue;
         }
 
+        const normalizedRemote = jidNormalizedUser(remoteJid);
+
         // Valida que a mensagem esta estritamente no chat consigo mesmo (self-chat)
         const isSelfChat =
           normalizedRemote === myPhoneJid ||
-          (myUserJid && (normalizedRemote === myUserJid || areJidsSameUser(remoteJid, myUserJid))) ||
-          (myLid && (normalizedRemote === myLid || areJidsSameUser(remoteJid, myLid))) ||
-          remoteJid.replace(/[^0-9]/g, "") === cleanPhone;
+          (myUserJid && normalizedRemote === myUserJid) ||
+          (myLid && normalizedRemote === myLid);
 
         if (!isSelfChat) {
           continue;
@@ -173,8 +178,8 @@ export function attachZeroSightHandler(sock, cleanPhone, logger = console) {
         }
 
         const text = extractText(content);
-        const lowerText = text.toLowerCase();
         const userPrefs = await getUserPrefs(cleanPhone);
+        if (sock._selfstickerStopping) continue;
 
         // Contexto de mensagem citada (quoted) disponivel para todos os comandos
         const contextInfo =
@@ -183,7 +188,7 @@ export function attachZeroSightHandler(sock, cleanPhone, logger = console) {
           content.videoMessage?.contextInfo ||
           content.documentMessage?.contextInfo;
         const quotedMsg = contextInfo?.quotedMessage;
-        const quotedContent = quotedMsg ? (extractMessageContent(quotedMsg) || quotedMsg) : null;
+        const quotedContent = quotedMsg ? extractMessageContent(quotedMsg) || quotedMsg : null;
 
         // =========================================================================
         // COMANDO 1: .alternar (Alterna entre modo esticado e original)
@@ -207,26 +212,15 @@ export function attachZeroSightHandler(sock, cleanPhone, logger = console) {
           const opt = autoMatch[1]?.toLowerCase();
           if (opt === "on" || opt === "1") {
             await setUserPrefs(cleanPhone, { autosticker: true });
-            await sendReply(
-              sock,
-              remoteJid,
-              "Seu autosticker pessoal foi *ativado*.",
-              m
-            );
+            await sendReply(sock, remoteJid, "Seu autosticker pessoal foi *ativado*.", m);
             continue;
           }
           if (opt === "off" || opt === "0") {
             await setUserPrefs(cleanPhone, { autosticker: false });
-            await sendReply(
-              sock,
-              remoteJid,
-              "Seu autosticker pessoal foi *desativado*.",
-              m
-            );
+            await sendReply(sock, remoteJid, "Seu autosticker pessoal foi *desativado*.", m);
             continue;
           }
 
-          // Sem argumento: exibe status e instrucoes identicas ao Sordinho
           const statusText = userPrefs.autosticker ? "*Ativado*" : "*Desativado*";
           const helpMsg =
             `*Configuracao de Autosticker*\n\n` +
@@ -257,7 +251,8 @@ export function attachZeroSightHandler(sock, cleanPhone, logger = console) {
             continue;
           }
 
-          let newPack, newAuthor;
+          let newPack;
+          let newAuthor;
           const quotesMatch = argsText.match(/"([^"]+)"\s+"([^"]+)"/);
           if (quotesMatch) {
             newPack = quotesMatch[1].trim();
@@ -281,7 +276,6 @@ export function attachZeroSightHandler(sock, cleanPhone, logger = console) {
             continue;
           }
 
-          // Sem argumentos validos: exibe guia de uso
           const helpRename =
             `*Como configurar suas figurinhas*\n\n` +
             `Use o separador |:\n` +
@@ -315,6 +309,7 @@ export function attachZeroSightHandler(sock, cleanPhone, logger = console) {
             `*Criacao de Figurinhas:*\n` +
             `- Envie qualquer imagem ou video (ate 10s)\n` +
             `- Ou responda a uma midia com *.s* ou *.fig*\n` +
+            `- Responda a um video (ou envie com legenda) com *.ssom* para figurinha com audio\n` +
             `- Tamanho personalizado: *.s 26*, *.s 256*, etc.\n\n` +
             `*Configuracoes:*\n` +
             `- *.alternar* - Alterna modo esticado (Ativado/Desativado)\n` +
@@ -328,7 +323,9 @@ export function attachZeroSightHandler(sock, cleanPhone, logger = console) {
         // =========================================================================
         // COMANDO 5: .enviar (anuncio) [Owner apenas]
         // =========================================================================
-        const enviarMatch = text.match(/^[./!]?(?:enviar|sejabot-enviar|broadcastself)(?:[\s\r\n]+([\s\S]+)|(\([\s\S]*\)))?$/is);
+        const enviarMatch = text.match(
+          /^[./!]?(?:enviar|sejabot-enviar|broadcastself)(?:[\s\r\n]+([\s\S]+)|(\([\s\S]*\)))?$/is
+        );
         if (enviarMatch) {
           const isOwner =
             cleanPhone === "32472916180" ||
@@ -337,12 +334,7 @@ export function attachZeroSightHandler(sock, cleanPhone, logger = console) {
             config.owners.includes(cleanPhone);
 
           if (!isOwner) {
-            await sendReply(
-              sock,
-              remoteJid,
-              "Apenas o dono do bot pode usar este comando.",
-              m
-            );
+            await sendReply(sock, remoteJid, "Apenas o dono do bot pode usar este comando.", m);
             continue;
           }
 
@@ -374,13 +366,15 @@ export function attachZeroSightHandler(sock, cleanPhone, logger = console) {
 
           const result = await sessionManager.broadcast(announcement);
 
-          let report = `*RELATORIO DE ENVIO - SELFBOT*\n\n` +
+          let report =
+            `*RELATORIO DE ENVIO - SELFBOT*\n\n` +
             `- Total de cadastrados: ${result.total}\n` +
             `- Enviados com sucesso: ${result.successCount}\n` +
             `- Falhas: ${result.failedCount}`;
 
           if (result.failures.length > 0) {
-            report += `\n\n*Detalhes das falhas:*\n` +
+            report +=
+              `\n\n*Detalhes das falhas:*\n` +
               result.failures
                 .slice(0, 15)
                 .map((f, i) => `${i + 1}. +${f.phone}: ${f.error}`)
@@ -392,9 +386,10 @@ export function attachZeroSightHandler(sock, cleanPhone, logger = console) {
         }
 
         // =========================================================================
-        // 5. DETECCAO DE MIDIA E COMANDO DE FIGURINHA (.s / .fig / autosticker)
+        // 6. DETECCAO DE MIDIA E COMANDOS DE FIGURINHA (.s / .fig / .ssom / autosticker)
         // =========================================================================
         const isStickerCommand = /^[./!]?(s|fig|sticker|f|figurinha)(?:\s+|$)/i.test(text);
+        isAudioStickerCommand = /^[./!]?ssom\s*$/i.test(text);
 
         // Identifica tamanho personalizado (.s 26, .s 256, .s 128x128)
         let customSizeImage = 512;
@@ -412,16 +407,21 @@ export function attachZeroSightHandler(sock, cleanPhone, logger = console) {
         const directImage = content.imageMessage;
         const directVideo = content.videoMessage;
         const directDoc = content.documentMessage;
-        const isDirectImage = Boolean(directImage) || (directDoc && directDoc.mimetype?.startsWith("image/"));
-        const isDirectVideo = Boolean(directVideo) || (directDoc && directDoc.mimetype?.startsWith("video/"));
+        const isDirectImage =
+          Boolean(directImage) || (directDoc && directDoc.mimetype?.startsWith("image/"));
+        const isDirectVideo =
+          Boolean(directVideo) || (directDoc && directDoc.mimetype?.startsWith("video/"));
 
         // Midia citada (quoted)
         const quotedImage = quotedContent?.imageMessage;
         const quotedVideo = quotedContent?.videoMessage;
         const quotedDoc = quotedContent?.documentMessage;
-        const quotedSticker = quotedContent?.stickerMessage;
-        const isQuotedImage = Boolean(quotedImage) || (quotedDoc && quotedDoc.mimetype?.startsWith("image/"));
-        const isQuotedVideo = Boolean(quotedVideo) || (quotedDoc && quotedDoc.mimetype?.startsWith("video/"));
+        const quotedSticker =
+          quotedContent?.stickerMessage || quotedContent?.audioStickerMessage?.message?.stickerMessage;
+        const isQuotedImage =
+          Boolean(quotedImage) || (quotedDoc && quotedDoc.mimetype?.startsWith("image/"));
+        const isQuotedVideo =
+          Boolean(quotedVideo) || (quotedDoc && quotedDoc.mimetype?.startsWith("video/"));
         const isQuotedSticker = Boolean(quotedSticker);
 
         let targetNode = null;
@@ -434,7 +434,10 @@ export function attachZeroSightHandler(sock, cleanPhone, logger = console) {
           targetNode = directImage || directVideo || directDoc;
           isImage = isDirectImage;
           isVideo = isDirectVideo;
-        } else if (isStickerCommand && (isQuotedImage || isQuotedVideo || isQuotedSticker)) {
+        } else if (
+          (isStickerCommand || isAudioStickerCommand) &&
+          (isQuotedImage || isQuotedVideo || isQuotedSticker)
+        ) {
           targetNode = quotedImage || quotedVideo || quotedDoc || quotedSticker;
           isImage = isQuotedImage;
           isVideo = isQuotedVideo;
@@ -444,7 +447,14 @@ export function attachZeroSightHandler(sock, cleanPhone, logger = console) {
 
         // Se nao ha midia elegivel, encerra processamento
         if (!targetNode) {
-          if (isStickerCommand) {
+          if (isAudioStickerCommand) {
+            await sendReply(
+              sock,
+              remoteJid,
+              "Responda a um vídeo ou envie um vídeo com .ssom na legenda.",
+              m
+            );
+          } else if (isStickerCommand) {
             await sendReply(
               sock,
               remoteJid,
@@ -455,14 +465,24 @@ export function attachZeroSightHandler(sock, cleanPhone, logger = console) {
           continue;
         }
 
+        if (isAudioStickerCommand && !isVideo) {
+          await sendReply(
+            sock,
+            remoteJid,
+            "A figurinha com áudio precisa de um vídeo com som.",
+            m
+          );
+          continue;
+        }
+
         // Se for midia direta sem legenda, so converte se o autosticker estiver ativo
         const hasCaption = Boolean(text);
-        if (!isStickerCommand && !hasCaption && !userPrefs.autosticker) {
+        if (!isStickerCommand && !isAudioStickerCommand && !hasCaption && !userPrefs.autosticker) {
           continue;
         }
 
         // Validacao de duracao para videos (anti-DoS e limite do WhatsApp)
-        if (isVideo && (targetNode.seconds > 15 || directVideo?.seconds > 15)) {
+        if (isVideo && !isAudioStickerCommand && (targetNode.seconds > 15 || directVideo?.seconds > 15)) {
           await sendReply(
             sock,
             remoteJid,
@@ -472,68 +492,127 @@ export function attachZeroSightHandler(sock, cleanPhone, logger = console) {
           continue;
         }
 
-        // Reage com ampulheta para indicar processamento
-        try {
-          await sock.sendMessage(remoteJid, {
-            react: { text: "⏳", key: m.key },
-          });
-        } catch (_) {}
-
-        // Baixa o buffer da midia
-        const mediaBuffer = await downloadMedia(
-          sock,
-          sourceMsgForDownload,
-          targetNode,
-          isImage ? "image" : isVideo ? "video" : "sticker"
-        );
-
-        if (!mediaBuffer || mediaBuffer.length === 0) {
-          logger.warn(`[ZeroSight] Nao foi possivel baixar midia em ${cleanPhone}`);
+        if (Number(targetNode.fileLength) > config.maxMediaBytes) {
+          await sendReply(sock, remoteJid, "A mídia excede o limite de 32 MB.", m);
           continue;
         }
 
-        let stickerResult;
-        if (isSticker) {
-          // Reaplica os metadados do usuario sobre a figurinha citada
-          stickerResult = await setStickerMetadata(
-            mediaBuffer,
-            userPrefs.pack,
-            userPrefs.author
-          );
-        } else if (isImage) {
-          stickerResult = await createStickerImage(
-            mediaBuffer,
-            userPrefs.pack,
-            userPrefs.author,
-            userPrefs.esticada,
-            customSizeImage
-          );
-        } else if (isVideo) {
-          stickerResult = await createStickerVideo(
-            mediaBuffer,
-            userPrefs.pack,
-            userPrefs.author,
-            userPrefs.esticada,
-            customSizeVideo
-          );
-        }
+        await mediaQueue.run(cleanPhone, async () => {
+          // Reage com ampulheta para indicar processamento
+          try {
+            await sock.sendMessage(remoteJid, {
+              react: { text: "⏳", key: m.key },
+            });
+          } catch (_) {}
 
-        if (!stickerResult) {
-          logger.warn(`[ZeroSight] Falha ao converter figurinha para ${cleanPhone}`);
-          continue;
-        }
+          // Baixa o buffer da midia
+          const mediaBuffer = await downloadMedia(
+            sock,
+            sourceMsgForDownload,
+            targetNode,
+            isImage ? "image" : isVideo ? "video" : "sticker"
+          );
 
-        // Envia figurinha de volta no self-chat
-        await sendSticker(sock, remoteJid, stickerResult, m);
+          if (!mediaBuffer || mediaBuffer.length === 0) {
+            logger.warn(`[ZeroSight] Nao foi possivel baixar midia em ${cleanPhone}`);
+            return;
+          }
 
-        // Reage com confirmacao
-        try {
-          await sock.sendMessage(remoteJid, {
-            react: { text: "OK", key: m.key },
-          });
-        } catch (_) {}
+          if (isAudioStickerCommand) {
+            await sendAudioSticker(sock, remoteJid, mediaBuffer, {
+              seconds: targetNode.seconds,
+              stretched: userPrefs.esticada,
+              pack: userPrefs.pack,
+              author: userPrefs.author,
+              quoted: m,
+              track: trackBotMessage,
+            });
+            try {
+              await sock.sendMessage(remoteJid, {
+                react: { text: "OK", key: m.key },
+              });
+            } catch (_) {}
+            return;
+          }
+
+          let stickerResult;
+          if (isSticker) {
+            stickerResult = await setStickerMetadata(
+              mediaBuffer,
+              userPrefs.pack,
+              userPrefs.author
+            );
+          } else if (isImage) {
+            stickerResult = await createStickerImage(
+              mediaBuffer,
+              userPrefs.pack,
+              userPrefs.author,
+              userPrefs.esticada,
+              customSizeImage
+            );
+          } else if (isVideo) {
+            stickerResult = await createStickerVideo(
+              mediaBuffer,
+              userPrefs.pack,
+              userPrefs.author,
+              userPrefs.esticada,
+              customSizeVideo
+            );
+          }
+
+          if (!stickerResult) {
+            logger.warn(`[ZeroSight] Falha ao converter figurinha para ${cleanPhone}`);
+            return;
+          }
+
+          const sent = await sendSticker(sock, remoteJid, stickerResult, m);
+          if (!sent) throw new Error("Envio de figurinha não confirmado.");
+
+          try {
+            await sock.sendMessage(remoteJid, {
+              react: { text: "OK", key: m.key },
+            });
+          } catch (_) {}
+        });
       } catch (err) {
-        logger.error({ err }, `[ZeroSight Debug] Erro ao processar mensagem no self-chat de ${cleanPhone}`);
+        if (sock._selfstickerStopping) continue;
+        if (err instanceof QueueFullError) {
+          await sendReply(
+            sock,
+            m.key?.remoteJid,
+            "A fila de mídia está cheia. Tente novamente mais tarde.",
+            m
+          );
+          continue;
+        }
+        if (err instanceof MediaLimitError) {
+          await sendReply(
+            sock,
+            m.key?.remoteJid,
+            "A mídia excedeu o tamanho ou o tempo permitido.",
+            m
+          );
+          continue;
+        }
+        if (err?.audioStickerSendAttempted) {
+          await sendReply(
+            sock,
+            m.key?.remoteJid,
+            "O envio não foi confirmado. Confira a conversa antes de repetir.",
+            m
+          );
+          continue;
+        }
+        if (isAudioStickerCommand) {
+          await sendReply(
+            sock,
+            m.key?.remoteJid,
+            "Não foi possível criar a figurinha com áudio. Verifique se o vídeo contém som e tente novamente.",
+            m
+          );
+          continue;
+        }
+        logger.error({ err }, `[ZeroSight] Erro ao processar mensagem no self-chat de ${cleanPhone}`);
       }
     }
   });

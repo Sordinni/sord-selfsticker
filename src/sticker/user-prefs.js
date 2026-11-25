@@ -1,22 +1,15 @@
-import fs from "fs/promises";
-import path from "path";
+import { randomBytes } from "node:crypto";
+import { mkdir, open, readFile, rename, rm, stat } from "node:fs/promises";
+import path from "node:path";
 import { config } from "../config.js";
 
 const prefsCache = new Map();
+const writeLocks = new Map();
 
-/**
- * Normaliza o identificador do numero de telefone.
- * @param {string} phone
- * @returns {string}
- */
 function cleanPhoneNumber(phone) {
   return String(phone || "").replace(/\D/g, "");
 }
 
-/**
- * Retorna as configuracoes padrao de um usuario.
- * @returns {{ autosticker: boolean, esticada: boolean, pack: string, author: string }}
- */
 function getDefaultPrefs() {
   return {
     autosticker: true,
@@ -26,13 +19,45 @@ function getDefaultPrefs() {
   };
 }
 
-/**
- * Obtem o caminho do arquivo de preferencias de uma sessao.
- * @param {string} cleanPhone
- * @returns {string}
- */
+function normalizePrefs(data) {
+  const defaults = getDefaultPrefs();
+  return {
+    autosticker: typeof data?.autosticker === "boolean" ? data.autosticker : defaults.autosticker,
+    esticada: typeof data?.esticada === "boolean" ? data.esticada : defaults.esticada,
+    pack: typeof data?.pack === "string" && data.pack.trim() ? data.pack.trim().slice(0, 30) : defaults.pack,
+    author:
+      typeof data?.author === "string" && data.author.trim()
+        ? data.author.trim().slice(0, 30)
+        : defaults.author,
+  };
+}
+
+function remember(cleanPhone, value) {
+  prefsCache.delete(cleanPhone);
+  prefsCache.set(cleanPhone, value);
+  if (prefsCache.size > 10000) {
+    prefsCache.delete(prefsCache.keys().next().value);
+  }
+}
+
 function getPrefsFilePath(cleanPhone) {
   return path.join(config.sessionsDir, cleanPhone, "prefs.json");
+}
+
+async function loadRaw(cleanPhone) {
+  const prefsPath = getPrefsFilePath(cleanPhone);
+  try {
+    const info = await stat(prefsPath);
+    if (info.size > 1024 * 1024) throw new Error("Preferências excedem o limite.");
+    const parsed = JSON.parse(await readFile(prefsPath, "utf-8"));
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      throw new Error("Preferências inválidas.");
+    }
+    return parsed;
+  } catch (err) {
+    if (err.code === "ENOENT") return {};
+    throw err;
+  }
 }
 
 /**
@@ -47,22 +72,68 @@ export async function getUserPrefs(phone) {
   }
 
   if (prefsCache.has(cleanPhone)) {
-    return { ...prefsCache.get(cleanPhone) };
+    const cached = prefsCache.get(cleanPhone);
+    remember(cleanPhone, cached);
+    return { ...cached };
   }
 
-  const prefsPath = getPrefsFilePath(cleanPhone);
-  let prefs = getDefaultPrefs();
-
+  let prefs;
   try {
-    const raw = await fs.readFile(prefsPath, "utf-8");
-    const parsed = JSON.parse(raw);
-    prefs = { ...prefs, ...parsed };
+    prefs = normalizePrefs(await loadRaw(cleanPhone));
   } catch (_) {
-    // Arquivo ainda nao existe, utiliza o padrao inicial
+    prefs = getDefaultPrefs();
   }
 
-  prefsCache.set(cleanPhone, prefs);
+  remember(cleanPhone, prefs);
   return { ...prefs };
+}
+
+async function update(phone, updater) {
+  const cleanPhone = cleanPhoneNumber(phone);
+  if (!cleanPhone) {
+    return getDefaultPrefs();
+  }
+
+  const previous = writeLocks.get(cleanPhone) || Promise.resolve();
+  const task = previous
+    .catch(() => {})
+    .then(async () => {
+      const sessionDir = path.join(config.sessionsDir, cleanPhone);
+      await mkdir(sessionDir, { recursive: true, mode: 0o700 });
+
+      let raw = {};
+      try {
+        raw = await loadRaw(cleanPhone);
+      } catch (_) {}
+
+      const updated = normalizePrefs(updater(normalizePrefs(raw)));
+      const tempPath = path.join(sessionDir, `.${randomBytes(16).toString("hex")}.tmp`);
+      let handle;
+
+      try {
+        handle = await open(tempPath, "wx", 0o600);
+        await handle.writeFile(JSON.stringify(updated, null, 2), "utf-8");
+        await handle.sync();
+        await handle.close();
+        handle = null;
+        await rename(tempPath, getPrefsFilePath(cleanPhone));
+      } finally {
+        if (handle) await handle.close().catch(() => {});
+        await rm(tempPath, { force: true }).catch(() => {});
+      }
+
+      remember(cleanPhone, updated);
+      return { ...updated };
+    });
+
+  writeLocks.set(cleanPhone, task);
+  try {
+    return await task;
+  } finally {
+    if (writeLocks.get(cleanPhone) === task) {
+      writeLocks.delete(cleanPhone);
+    }
+  }
 }
 
 /**
@@ -72,42 +143,30 @@ export async function getUserPrefs(phone) {
  * @returns {Promise<{ autosticker: boolean, esticada: boolean, pack: string, author: string }>}
  */
 export async function setUserPrefs(phone, updates) {
-  const cleanPhone = cleanPhoneNumber(phone);
-  if (!cleanPhone) {
-    return getDefaultPrefs();
-  }
-
-  const current = await getUserPrefs(cleanPhone);
-  const updated = { ...current, ...updates };
-
-  prefsCache.set(cleanPhone, updated);
-
-  try {
-    const sessionDir = path.join(config.sessionsDir, cleanPhone);
-    await fs.mkdir(sessionDir, { recursive: true, mode: 0o700 });
-    await fs.writeFile(
-      getPrefsFilePath(cleanPhone),
-      JSON.stringify(updated, null, 2),
-      "utf-8"
-    );
-  } catch (err) {
-    console.error(`[UserPrefs] Falha ao persistir preferencias para ${cleanPhone}:`, err.message);
-  }
-
-  return { ...updated };
+  return update(phone, (current) => ({
+    ...current,
+    ...(typeof updates?.autosticker === "boolean" ? { autosticker: updates.autosticker } : {}),
+    ...(typeof updates?.esticada === "boolean" ? { esticada: updates.esticada } : {}),
+    ...(typeof updates?.pack === "string" && updates.pack.trim() ? { pack: updates.pack.trim() } : {}),
+    ...(typeof updates?.author === "string" && updates.author.trim() ? { author: updates.author.trim() } : {}),
+  }));
 }
 
 /**
  * Alterna um valor booleano nas preferencias do usuario.
  * @param {string} phone
  * @param {'esticada' | 'autosticker'} key
- * @returns {Promise<boolean>} Novo valor apos alternancia
+ * @returns {Promise<boolean>}
  */
 export async function toggleUserPref(phone, key) {
-  const current = await getUserPrefs(phone);
-  const newValue = !current[key];
-  await setUserPrefs(phone, { [key]: newValue });
-  return newValue;
+  if (key !== "esticada" && key !== "autosticker") {
+    throw new Error("Preferência inválida.");
+  }
+  const updated = await update(phone, (current) => ({
+    ...current,
+    [key]: !current[key],
+  }));
+  return updated[key];
 }
 
 /**
@@ -116,7 +175,16 @@ export async function toggleUserPref(phone, key) {
  * @returns {Promise<{ autosticker: boolean, esticada: boolean, pack: string, author: string }>}
  */
 export async function resetUserPrefs(phone) {
+  return update(phone, () => getDefaultPrefs());
+}
+
+export function forgetUserPrefs(phone) {
+  prefsCache.delete(cleanPhoneNumber(phone));
+}
+
+export async function flushUserPrefs(phone) {
   const cleanPhone = cleanPhoneNumber(phone);
-  const defaults = getDefaultPrefs();
-  return await setUserPrefs(cleanPhone, defaults);
+  while (writeLocks.has(cleanPhone)) {
+    await writeLocks.get(cleanPhone).catch(() => {});
+  }
 }

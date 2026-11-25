@@ -15,6 +15,7 @@
 O **Sord Self-Sticker** permite conectar o seu próprio WhatsApp através de um **Código de Emparelhamento (Pairing Code)** de 8 dígitos gerado na web. Uma vez conectado, ele opera **exclusivamente no seu chat privado com você mesmo ("Mensagens Salvas")**:
 - **Figurinhas Estáticas:** Envie qualquer foto ou imagem para receber a figurinha WebP instantânea.
 - **Figurinhas Animadas:** Envie um vídeo curto ou GIF (até 10 segundos) para receber uma figurinha animada otimizada (< 1MB) com FFmpeg.
+- **Figurinhas com Áudio (`.ssom`):** Responda a um vídeo (ou envie com legenda `.ssom`) para criar uma figurinha animada com som (Opus 48kHz).
 - **Modo Esticado (`.alternar`):** Alterne entre figurinhas esticadas (ocupando todo o quadrado 512x512) ou com proporção original preservada.
 - **Controle de Autosticker (`.autosticker on/off`):** Ative ou desative a conversão automática de mídias enviadas sem legenda.
 - **Créditos Personalizados (`.renomear Pack | Autor`):** Defina o nome do pacote e autor gravados no EXIF de suas figurinhas.
@@ -26,6 +27,7 @@ O **Sord Self-Sticker** permite conectar o seu próprio WhatsApp através de um 
 - `.autosticker off` — Desativa a conversão automática (converte apenas com `.s` ou `.fig`).
 - `.renomear Pack | Autor` — Personaliza o nome do pacote e o autor da figurinha.
 - `.s` ou `.fig` — Converte a mídia enviada ou citada (suporta tamanho, ex: `.s 26`).
+- `.ssom` — Converte um vídeo enviado ou citado em figurinha animada com áudio.
 - `.enviar (anuncio)` — Envia comunicado em massa para todos os usuários cadastrados (apenas owner).
 - `.status` — Mostra o status das suas preferências atuais.
 - `.ajuda` — Exibe o menu com todos os comandos e exemplos.
@@ -43,6 +45,7 @@ O **Sord Self-Sticker** permite conectar o seu próprio WhatsApp através de um 
 **Sord Self-Sticker** allows users to link their WhatsApp account via an 8-digit **Pairing Code** without scanning QR codes. Once paired, it works **strictly in your private "Message Yourself" chat**:
 - **Static Stickers:** Send any photo to receive an instant WebP sticker.
 - **Animated Stickers:** Send a short video or GIF (< 10s) to receive an optimized animated sticker (< 1MB).
+- **Audio Stickers (`.ssom`):** Reply to a video (or send with `.ssom` caption) to create an animated sticker with embedded Opus audio.
 - **Stretched Mode (`.alternar`):** Toggle between stretched stickers (filling the entire 512x512 canvas) and aspect-ratio preserved stickers.
 - **Autosticker Control (`.autosticker on/off`):** Enable or disable automatic conversion of media sent without captions.
 - **Custom Credits (`.renomear Pack | Author`):** Set custom pack name and publisher author recorded into sticker EXIF.
@@ -54,6 +57,7 @@ O **Sord Self-Sticker** permite conectar o seu próprio WhatsApp através de um 
 - `.autosticker off` — Disable automatic conversion (convert only via `.s` or `.fig`).
 - `.renomear Pack | Author` — Customize sticker pack name and author.
 - `.s` or `.fig` — Convert attached or quoted media (supports sizes, e.g. `.s 26`).
+- `.ssom` — Convert attached or quoted video into an animated sticker with audio.
 - `.enviar (announcement)` — Broadcast announcement to all registered users (owner only).
 - `.status` — Display current user preferences.
 - `.ajuda` / `.help` — Display help menu with all commands.
@@ -129,7 +133,7 @@ Encerra a sessão e apaga todas as chaves de autenticação do disco.
   ```
 
 ### `POST /api/sejabot/enviar`
-Transmite uma mensagem de anúncio oficial para todos os usuários cadastrados.
+Transmite uma mensagem de anúncio oficial para todos os usuários cadastrados (requer `BROADCAST_TOKEN` configurado e cabeçalho `Authorization: Bearer <token>`).
 - **Corpo (JSON):**
   ```json
   { "message": "O bot foi atualizado com novas funções!" }

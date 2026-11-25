@@ -3,6 +3,8 @@ import { config } from "../config.js";
 
 const ipRequestMap = new Map();
 const phoneCooldownMap = new Map();
+const maxBuckets = 10000;
+let nextPrune = 0;
 
 /**
  * Validates and normalizes phone number to clean E.164 without '+'
@@ -38,6 +40,25 @@ export function checkPairingLimits(ip, phone) {
 
   // 1. Check IP rate limit (Window: 15 minutes)
   const windowMs = 15 * 60 * 1000;
+  const phoneCooldownMs = config.cooldownMinutesPerPhone * 60 * 1000;
+
+  if (now >= nextPrune) {
+    for (const [key, value] of ipRequestMap) {
+      if (value.resetAt <= now) ipRequestMap.delete(key);
+    }
+    for (const [key, value] of phoneCooldownMap) {
+      if (value + phoneCooldownMs <= now) phoneCooldownMap.delete(key);
+    }
+    nextPrune = now + 60000;
+  }
+
+  if (
+    (!ipRequestMap.has(ip) && ipRequestMap.size >= maxBuckets) ||
+    (!phoneCooldownMap.has(phone) && phoneCooldownMap.size >= maxBuckets)
+  ) {
+    return { allowed: false, reason: "Limite temporário atingido. Tente novamente mais tarde." };
+  }
+
   const ipRecord = ipRequestMap.get(ip) || { count: 0, resetAt: now + windowMs };
 
   if (now > ipRecord.resetAt) {
@@ -55,8 +76,7 @@ export function checkPairingLimits(ip, phone) {
     };
   }
 
-  // 2. Check Phone number cooldown (15 minutes)
-  const phoneCooldownMs = config.cooldownMinutesPerPhone * 60 * 1000;
+  // 2. Check Phone number cooldown
   const lastPhoneAttempt = phoneCooldownMap.get(phone) || 0;
 
   if (now - lastPhoneAttempt < phoneCooldownMs) {
